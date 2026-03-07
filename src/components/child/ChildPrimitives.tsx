@@ -73,6 +73,31 @@ export function NumberCard({
   );
 }
 
+export function ProgressBar({
+  value,
+  color = "purple",
+}: {
+  value: number;
+  color?: string;
+}) {
+  const colorMap: Record<string, string> = {
+    purple: "bg-purple-500",
+    amber: "bg-amber-500",
+    emerald: "bg-emerald-500",
+    sky: "bg-sky-500",
+    rose: "bg-rose-500",
+    indigo: "bg-indigo-500",
+  };
+  return (
+    <div className="w-full bg-gray-100 rounded-full h-2.5">
+      <div
+        className={`h-2.5 rounded-full transition-all ${colorMap[color] || colorMap.purple}`}
+        style={{ width: `${Math.max(4, value)}%` }}
+      />
+    </div>
+  );
+}
+
 export const TALENT_STYLES = [
   { bg: "bg-purple-50", border: "border-purple-100", text: "text-purple-700", icon: "text-purple-500" },
   { bg: "bg-amber-50", border: "border-amber-100", text: "text-amber-700", icon: "text-amber-500" },
