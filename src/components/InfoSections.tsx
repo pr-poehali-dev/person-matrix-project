@@ -16,14 +16,12 @@ export default function InfoSections({ calcRef }: InfoSectionsProps) {
   const navigate = useNavigate();
 
   const handleTariff = (title: string) => {
-    if (title === "Базовый") {
+    if (title === "Базовый" || title === "Полный анализ") {
       calcRef.current?.scrollIntoView({ behavior: "smooth" });
     } else if (title === "Совместимость") {
       navigate("/compatibility");
     } else if (title === "Анализ ребёнка") {
       navigate("/child");
-    } else {
-      calcRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -98,11 +96,12 @@ export default function InfoSections({ calcRef }: InfoSectionsProps) {
           <h2 className="font-cormorant text-4xl md:text-5xl font-light" style={{ color: "#F5D98B" }}>Выберите свой анализ</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {[
             { title: "Базовый", subtitle: "Бесплатно", items: ["3 числа матрицы", "Характер личности", "Сильные стороны", "Карьера и отношения"], accent: false, btnText: "Рассчитать" },
-            { title: "Полный анализ", subtitle: "Бесплатно", items: ["Все 5 чисел матрицы", "Жизненные циклы", "Пики и вызовы", "Здоровье и финансы", "Энергия года"], accent: true, btnText: "Попробовать" },
-            { title: "Совместимость", subtitle: "Бесплатно", items: ["Анализ пары", "3 вида совместимости", "Советы по отношениям", "Процент совместимости"], accent: false, btnText: "Проверить" },
+            { title: "Полный анализ", subtitle: "490 ₽", items: ["Все 5 чисел матрицы", "Жизненные циклы и пики", "Здоровье и финансы", "Энергия личного года"], accent: true, btnText: "Подробнее" },
+            { title: "Совместимость", subtitle: "690 ₽", items: ["Анализ пары", "3 шкалы совместимости", "Советы по отношениям", "Процент совместимости"], accent: false, btnText: "Проверить" },
+            { title: "Анализ ребёнка", subtitle: "990 ₽", items: ["Профиль и таланты", "Советы родителям", "Сильные стороны", "Зоны развития"], accent: false, btnText: "Рассчитать" },
           ].map(({ title, subtitle, items, accent, btnText }) => (
             <div key={title}
               className="glass-card p-6 flex flex-col transition-all duration-300 hover:scale-105"

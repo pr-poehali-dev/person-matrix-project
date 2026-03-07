@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getMe, logout, getToken } from "@/lib/auth";
+import { getBalance } from "@/lib/payments";
 import { DESCRIPTIONS } from "@/lib/matrix";
 import Icon from "@/components/ui/icon";
 
@@ -38,6 +39,7 @@ export default function Cabinet() {
   const [calculations, setCalculations] = useState<Calculation[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCalc, setActiveCalc] = useState<Calculation | null>(null);
+  const [balance, setBalance] = useState<number>(0);
 
   useEffect(() => {
     if (!getToken()) { navigate("/auth"); return; }
@@ -47,6 +49,7 @@ export default function Cabinet() {
         setUser(d.user);
         setCalculations(d.calculations);
         if (d.calculations.length > 0) setActiveCalc(d.calculations[0]);
+        getBalance().then(res => { if (res.status === 200 && res.data?.balance !== undefined) setBalance(res.data.balance as number); });
       } else {
         navigate("/auth");
       }
@@ -79,6 +82,10 @@ export default function Cabinet() {
           </Link>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-500 hidden sm:block">{user?.email}</span>
+            <Link to="/balance" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-100 text-amber-700 text-sm font-medium hover:bg-amber-100 transition-colors">
+              <Icon name="Wallet" size={14} />
+              {balance} ₽
+            </Link>
             <button
               onClick={handleLogout}
               className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors"

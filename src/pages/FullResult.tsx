@@ -1,5 +1,7 @@
-import { useMemo } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useMemo, useState, useEffect } from "react";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import { getToken } from "@/lib/auth";
+import { checkPurchase, spend, getBalance, PRODUCT_PRICES } from "@/lib/payments";
 import {
   calcLifePath,
   calcCharacter,
@@ -110,6 +112,37 @@ export default function FullResult() {
       pinnacles: calcPinnaclesChallenges(date)!,
     };
   }, [date]);
+
+  const navigate = useNavigate();
+  const [purchased, setPurchased] = useState(false);
+  const [balance, setBalance] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [spending, setSpending] = useState(false);
+
+  useEffect(() => {
+    if (!date) { setLoading(false); return; }
+    const token = getToken();
+    if (!token) { setLoading(false); return; }
+    Promise.all([
+      checkPurchase("full_analysis", { birth_date: date }),
+      getBalance()
+    ]).then(([purchaseRes, balanceRes]) => {
+      if (purchaseRes.status === 200 && purchaseRes.data?.purchased) setPurchased(true);
+      if (balanceRes.status === 200 && balanceRes.data?.balance !== undefined) setBalance(balanceRes.data.balance as number);
+    }).finally(() => setLoading(false));
+  }, [date]);
+
+  const handleBuy = async () => {
+    if (!getToken()) { navigate("/auth"); return; }
+    setSpending(true);
+    const res = await spend("full_analysis", { birth_date: date });
+    if (res.status === 200) {
+      setPurchased(true);
+    } else if (res.status === 402) {
+      navigate("/balance");
+    }
+    setSpending(false);
+  };
 
   /* ── error state ── */
   if (!date || !data) {
@@ -304,6 +337,9 @@ export default function FullResult() {
           </Card>
         )}
 
+        {/* ═══════════════════  PREMIUM CONTENT  ═══════════════════ */}
+        {purchased ? (
+          <>
         {/* ═══════════════════  7. HEALTH  ═══════════════════ */}
         {desc && (
           <Card className="p-6 sm:p-8">
@@ -469,6 +505,36 @@ export default function FullResult() {
               ))}
             </div>
           </Card>
+        )}
+          </>
+        ) : (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
+            <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+              <Icon name="Lock" size={24} className="text-amber-600" />
+            </div>
+            <h3 className="font-serif text-2xl text-gray-900 mb-2">Полный анализ личности</h3>
+            <p className="text-sm text-gray-500 mb-2 max-w-md mx-auto">
+              Здоровье, финансы, личный год, жизненные циклы, пики и вызовы судьбы
+            </p>
+            <div className="text-3xl font-serif font-bold text-amber-700 mb-4">{PRODUCT_PRICES.full_analysis} ₽</div>
+            {getToken() ? (
+              <div>
+                <button onClick={handleBuy} disabled={spending}
+                  className="px-8 py-3 rounded-xl text-sm font-semibold text-white transition-all"
+                  style={{ background: spending ? "#d1d5db" : "linear-gradient(135deg, #92400e, #d97706, #f59e0b)" }}>
+                  {spending ? "Оплата..." : balance >= PRODUCT_PRICES.full_analysis ? "Оплатить с баланса" : `Пополнить баланс (${balance} ₽)`}
+                </button>
+                {balance < PRODUCT_PRICES.full_analysis && (
+                  <p className="text-xs text-gray-400 mt-2">На балансе {balance} ₽, нужно {PRODUCT_PRICES.full_analysis} ₽</p>
+                )}
+              </div>
+            ) : (
+              <button onClick={() => navigate("/auth")} className="px-8 py-3 rounded-xl text-sm font-semibold text-white"
+                style={{ background: "linear-gradient(135deg, #92400e, #d97706, #f59e0b)" }}>
+                Войти для покупки
+              </button>
+            )}
+          </div>
         )}
 
         {/* ── Footer CTA ── */}

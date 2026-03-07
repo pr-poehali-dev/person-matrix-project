@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Icon from "@/components/ui/icon";
+import { getToken } from "@/lib/auth";
+import { checkPurchase, spend, getBalance, PRODUCT_PRICES } from "@/lib/payments";
 import {
   calcLifePath,
   calcCharacter,
@@ -109,6 +111,10 @@ export default function ChildAnalysis() {
     desc: PersonDescription;
     name: string;
   } | null>(null);
+  const navigate = useNavigate();
+  const [purchased, setPurchased] = useState(false);
+  const [balance, setBalance] = useState(0);
+  const [spending, setSpending] = useState(false);
 
   function handleCalculate() {
     setError("");
@@ -143,7 +149,30 @@ export default function ChildAnalysis() {
       desc,
       name: childName.trim(),
     });
+
+    const token = getToken();
+    if (token && birthDate) {
+      Promise.all([
+        checkPurchase("child_analysis", { birth_date: birthDate }),
+        getBalance()
+      ]).then(([purchaseRes, balanceRes]) => {
+        if (purchaseRes.status === 200 && purchaseRes.data?.purchased) setPurchased(true);
+        else setPurchased(false);
+        if (balanceRes.status === 200 && balanceRes.data?.balance !== undefined) setBalance(balanceRes.data.balance as number);
+      });
+    } else {
+      setPurchased(false);
+    }
   }
+
+  const handleBuy = async () => {
+    if (!getToken()) { navigate("/auth"); return; }
+    setSpending(true);
+    const res = await spend("child_analysis", { birth_date: birthDate, child_name: childName });
+    if (res.status === 200) setPurchased(true);
+    else if (res.status === 402) navigate("/balance");
+    setSpending(false);
+  };
 
   function handleReset() {
     setResult(null);
@@ -302,6 +331,9 @@ export default function ChildAnalysis() {
               </div>
             </Card>
 
+            {/* ── PREMIUM CONTENT ── */}
+            {purchased ? (
+              <>
             {/* ── 3. Child profile description ── */}
             <Card className="p-6 sm:p-8">
               <SectionHeading
@@ -422,6 +454,36 @@ export default function ChildAnalysis() {
                 </ul>
               </Card>
             </div>
+              </>
+            ) : (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
+                <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+                  <Icon name="Lock" size={24} className="text-amber-600" />
+                </div>
+                <h3 className="font-serif text-2xl text-gray-900 mb-2">Полный профиль ребёнка</h3>
+                <p className="text-sm text-gray-500 mb-2 max-w-md mx-auto">
+                  Характер, таланты, советы для родителей, сильные стороны и зоны роста
+                </p>
+                <div className="text-3xl font-serif font-bold text-amber-700 mb-4">{PRODUCT_PRICES.child_analysis} ₽</div>
+                {getToken() ? (
+                  <div>
+                    <button onClick={handleBuy} disabled={spending}
+                      className="px-8 py-3 rounded-xl text-sm font-semibold text-white transition-all"
+                      style={{ background: spending ? "#d1d5db" : "linear-gradient(135deg, #92400e, #d97706, #f59e0b)" }}>
+                      {spending ? "Оплата..." : balance >= PRODUCT_PRICES.child_analysis ? "Оплатить с баланса" : `Пополнить баланс (${balance} ₽)`}
+                    </button>
+                    {balance < PRODUCT_PRICES.child_analysis && (
+                      <p className="text-xs text-gray-400 mt-2">На балансе {balance} ₽, нужно {PRODUCT_PRICES.child_analysis} ₽</p>
+                    )}
+                  </div>
+                ) : (
+                  <button onClick={() => navigate("/auth")} className="px-8 py-3 rounded-xl text-sm font-semibold text-white"
+                    style={{ background: "linear-gradient(135deg, #92400e, #d97706, #f59e0b)" }}>
+                    Войти для покупки
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* ── 7. CTA ── */}
             <div className="text-center pt-4 pb-8 space-y-4">

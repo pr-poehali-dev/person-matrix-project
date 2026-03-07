@@ -1,0 +1,20 @@
+{
+  "tests": [
+    {
+      "name": "Get prices",
+      "method": "POST",
+      "path": "/",
+      "body": {"action": "prices"},
+      "expectedStatus": 200,
+      "bodyMatcher": "none"
+    },
+    {
+      "name": "Balance without auth",
+      "method": "POST",
+      "path": "/",
+      "body": {"action": "balance"},
+      "expectedStatus": 401,
+      "bodyMatcher": "none"
+    }
+  ]
+}
