@@ -1,6 +1,6 @@
 """
-Админ-панель: авторизация и статистика по регистрациям, доходам, покупкам.
-action: login | stats | users | purchases
+Админ-панель: авторизация и статистика по регистрациям, доходам, покупкам, начисление баланса.
+action: login | stats | users | purchases | topup
 """
 import os
 import json
@@ -185,6 +185,35 @@ def handler(event, context):
                 for r in rows
             ],
         })
+
+    if action == "topup":
+        user_id = int(body.get("user_id", 0))
+        amount = int(body.get("amount", 0))
+        if user_id <= 0 or amount <= 0:
+            conn.close()
+            return err(400, "Укажите user_id и amount > 0")
+        cur = conn.cursor()
+        cur.execute(f"SELECT id FROM {SCHEMA}.users WHERE id = {user_id}")
+        if not cur.fetchone():
+            cur.close()
+            conn.close()
+            return err(404, "Пользователь не найден")
+        cur.execute(f"SELECT user_id FROM {SCHEMA}.balances WHERE user_id = {user_id}")
+        if not cur.fetchone():
+            cur.execute(f"INSERT INTO {SCHEMA}.balances (user_id, amount) VALUES ({user_id}, 0)")
+        cur.execute(
+            f"UPDATE {SCHEMA}.balances SET amount = amount + {amount}, updated_at = NOW() WHERE user_id = {user_id}"
+        )
+        cur.execute(
+            f"INSERT INTO {SCHEMA}.transactions (user_id, type, amount, description, status) "
+            f"VALUES ({user_id}, 'topup', {amount}, 'Начисление администратором', 'completed')"
+        )
+        conn.commit()
+        cur.execute(f"SELECT amount FROM {SCHEMA}.balances WHERE user_id = {user_id}")
+        new_balance = cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        return ok({"ok": True, "user_id": user_id, "added": amount, "balance": new_balance})
 
     conn.close()
     return err(400, "Неизвестное действие")

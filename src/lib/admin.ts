@@ -43,4 +43,8 @@ export async function getPurchases(page = 1) {
   return post("purchases", { page });
 }
 
-export default { adminLogin, getStats, getUsers, getPurchases };
+export async function adminTopup(user_id: number, amount: number) {
+  return post("topup", { user_id, amount });
+}
+
+export default { adminLogin, getStats, getUsers, getPurchases, adminTopup };
