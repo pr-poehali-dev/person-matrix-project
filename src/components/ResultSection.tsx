@@ -5,9 +5,10 @@ import { getToken } from "@/lib/auth";
 
 type ResultSectionProps = {
   result: { life: number; character: number; destiny: number };
+  birthDate: string;
 };
 
-export default function ResultSection({ result }: ResultSectionProps) {
+export default function ResultSection({ result, birthDate }: ResultSectionProps) {
   const navigate = useNavigate();
   const isLoggedIn = Boolean(getToken());
   const desc: PersonDescription = DESCRIPTIONS[result.life];
@@ -132,13 +133,14 @@ export default function ResultSection({ result }: ResultSectionProps) {
       <div className="glass-card p-8 text-center"
         style={{ borderRadius: "8px", background: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)" }}>
         <div className="w-16 h-16 number-circle flex items-center justify-center mx-auto mb-4">
-          <Icon name="Lock" size={24} style={{ color: "#C9A84C" }} />
+          <Icon name="Sparkles" size={24} style={{ color: "#C9A84C" }} />
         </div>
-        <h3 className="font-cormorant text-2xl mb-2" style={{ color: "#F5D98B" }}>Получите полный анализ</h3>
-        <p className="font-golos text-sm mb-6" style={{ color: "rgba(255,255,255,0.45)", maxWidth: "400px", margin: "0 auto 24px" }}>
-          Жизненные циклы, энергия года, PDF-отчёт на 20 страниц, совместимость с партнёром
+        <h3 className="font-cormorant text-2xl mb-2" style={{ color: "#F5D98B" }}>Хотите узнать больше?</h3>
+        <p className="font-golos text-sm mb-6" style={{ color: "rgba(255,255,255,0.45)", maxWidth: "460px", margin: "0 auto 24px" }}>
+          Жизненные циклы, энергия года, здоровье, финансы, пики и вызовы — полный анализ личности
         </p>
         <button
+          onClick={() => navigate(`/result?date=${birthDate}`)}
           className="px-10 py-4 font-golos font-medium text-sm tracking-widest uppercase transition-all duration-300 hover:scale-105"
           style={{
             background: "linear-gradient(135deg, #8B6914, #C9A84C, #F5D98B)",
@@ -147,7 +149,7 @@ export default function ResultSection({ result }: ResultSectionProps) {
             boxShadow: "0 8px 32px rgba(201,168,76,0.3)"
           }}
         >
-          Получить полный анализ — 490 ₽
+          Открыть полный анализ
         </button>
       </div>
     </section>

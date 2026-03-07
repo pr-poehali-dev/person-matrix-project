@@ -83,7 +83,7 @@ export default function Index() {
           onCalculate={handleCalculate}
         />
 
-        {result && <ResultSection result={result} />}
+        {result && <ResultSection result={result} birthDate={birthDate} />}
 
         <InfoSections calcRef={calcRef} />
 

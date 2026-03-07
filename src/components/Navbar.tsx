@@ -3,26 +3,25 @@ import { useNavigate } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { getToken } from "@/lib/auth";
 
-const navItems = ["Главная", "Калькулятор", "Анализ", "Совместимость", "Методология"];
+const navItems = [
+  { label: "Главная", path: "/" },
+  { label: "Совместимость", path: "/compatibility" },
+  { label: "Анализ ребёнка", path: "/child" },
+];
 
 export default function Navbar() {
-  const [activeNav, setActiveNav] = useState("Главная");
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const isLoggedIn = Boolean(getToken());
 
-  const handleAuthClick = async () => {
-    if (isLoggedIn) {
-      navigate("/cabinet");
-    } else {
-      navigate("/auth");
-    }
+  const handleAuthClick = () => {
+    navigate(isLoggedIn ? "/cabinet" : "/auth");
   };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: "rgba(8,12,31,0.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(201,168,76,0.1)" }}>
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
           <div className="w-8 h-8 number-circle flex items-center justify-center">
             <span className="font-cormorant text-lg font-bold" style={{ color: "#C9A84C" }}>М</span>
           </div>
@@ -33,12 +32,12 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-8">
           {navItems.map(item => (
             <button
-              key={item}
-              onClick={() => setActiveNav(item)}
-              className="font-golos text-sm transition-all duration-300"
-              style={{ color: activeNav === item ? "#C9A84C" : "rgba(245,217,139,0.5)", letterSpacing: "0.03em" }}
+              key={item.label}
+              onClick={() => navigate(item.path)}
+              className="font-golos text-sm transition-all duration-300 hover:opacity-100"
+              style={{ color: "rgba(245,217,139,0.6)", letterSpacing: "0.03em" }}
             >
-              {item}
+              {item.label}
             </button>
           ))}
         </div>
@@ -62,9 +61,9 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden px-6 pb-4 flex flex-col gap-4" style={{ borderTop: "1px solid rgba(201,168,76,0.1)" }}>
           {navItems.map(item => (
-            <button key={item} onClick={() => { setActiveNav(item); setMenuOpen(false); }}
+            <button key={item.label} onClick={() => { navigate(item.path); setMenuOpen(false); }}
               className="font-golos text-sm text-left py-1" style={{ color: "rgba(245,217,139,0.7)" }}>
-              {item}
+              {item.label}
             </button>
           ))}
           <button onClick={() => { handleAuthClick(); setMenuOpen(false); }}

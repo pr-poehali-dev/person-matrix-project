@@ -1,4 +1,5 @@
 import { RefObject } from "react";
+import { useNavigate } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 
 const GoldDivider = () => (
@@ -12,6 +13,20 @@ type InfoSectionsProps = {
 };
 
 export default function InfoSections({ calcRef }: InfoSectionsProps) {
+  const navigate = useNavigate();
+
+  const handleTariff = (title: string) => {
+    if (title === "Базовый") {
+      calcRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else if (title === "Совместимость") {
+      navigate("/compatibility");
+    } else if (title === "Анализ ребёнка") {
+      navigate("/child");
+    } else {
+      calcRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <>
       <GoldDivider />
@@ -58,9 +73,9 @@ export default function InfoSections({ calcRef }: InfoSectionsProps) {
             { icon: "User", title: "Характер и темперамент", desc: "Глубокий анализ вашей природы, поведенческих паттернов и психотипа" },
             { icon: "TrendingUp", title: "Сильные стороны", desc: "Ваши уникальные таланты и ресурсы для достижения успеха" },
             { icon: "DollarSign", title: "Деньги и карьера", desc: "Числовой код вашего финансового потенциала и профессионального пути" },
-            { icon: "Heart", title: "Отношения и любовь", desc: "Паттерны в отношениях, совместимость, тип идеального партнёра" },
-            { icon: "Activity", title: "Жизненные циклы", desc: "Три цикла жизни: благоприятные периоды для решений и изменений" },
-            { icon: "Zap", title: "Энергия года", desc: "Личный год — что несёт текущий период вашей жизни" },
+            { icon: "Heart", title: "Отношения и совместимость", desc: "Паттерны в отношениях, проверка совместимости с партнёром" },
+            { icon: "Activity", title: "Здоровье и энергия", desc: "Уязвимые зоны тела и рекомендации по поддержанию здоровья" },
+            { icon: "Zap", title: "Циклы и личный год", desc: "3 жизненных цикла, 4 пика судьбы и энергия текущего года" },
           ].map(({ icon, title, desc }) => (
             <div key={title} className="glass-card p-5 transition-all duration-300 hover:scale-105 cursor-pointer"
               style={{ borderRadius: "6px" }}>
@@ -83,13 +98,12 @@ export default function InfoSections({ calcRef }: InfoSectionsProps) {
           <h2 className="font-cormorant text-4xl md:text-5xl font-light" style={{ color: "#F5D98B" }}>Выберите свой анализ</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {[
-            { title: "Базовый", price: "Бесплатно", items: ["Число личности", "Число характера", "Краткое описание"], accent: false },
-            { title: "Анализ личности", price: "490 ₽", items: ["PDF-отчёт 20 стр.", "Все числа матрицы", "Жизненные циклы", "Энергия года"], accent: true },
-            { title: "Совместимость", price: "690 ₽", items: ["Анализ пары", "Числа совместимости", "Советы по отношениям", "PDF-отчёт"], accent: false },
-            { title: "Анализ ребёнка", price: "990 ₽", items: ["Профиль ребёнка", "Таланты и способности", "Советы родителям", "PDF-отчёт"], accent: false },
-          ].map(({ title, price, items, accent }) => (
+            { title: "Базовый", subtitle: "Бесплатно", items: ["3 числа матрицы", "Характер личности", "Сильные стороны", "Карьера и отношения"], accent: false, btnText: "Рассчитать" },
+            { title: "Полный анализ", subtitle: "Бесплатно", items: ["Все 5 чисел матрицы", "Жизненные циклы", "Пики и вызовы", "Здоровье и финансы", "Энергия года"], accent: true, btnText: "Попробовать" },
+            { title: "Совместимость", subtitle: "Бесплатно", items: ["Анализ пары", "3 вида совместимости", "Советы по отношениям", "Процент совместимости"], accent: false, btnText: "Проверить" },
+          ].map(({ title, subtitle, items, accent, btnText }) => (
             <div key={title}
               className="glass-card p-6 flex flex-col transition-all duration-300 hover:scale-105"
               style={{
@@ -107,7 +121,7 @@ export default function InfoSections({ calcRef }: InfoSectionsProps) {
                 </div>
               )}
               <h3 className="font-cormorant text-xl mb-1" style={{ color: "#F5D98B" }}>{title}</h3>
-              <div className="font-cormorant text-3xl font-semibold mb-4" style={{ color: "#C9A84C" }}>{price}</div>
+              <div className="font-cormorant text-2xl font-semibold mb-4" style={{ color: "#C9A84C" }}>{subtitle}</div>
               <ul className="space-y-2 flex-1 mb-6">
                 {items.map(item => (
                   <li key={item} className="flex items-center gap-2">
@@ -117,6 +131,7 @@ export default function InfoSections({ calcRef }: InfoSectionsProps) {
                 ))}
               </ul>
               <button
+                onClick={() => handleTariff(title)}
                 className="w-full py-3 font-golos text-xs font-medium tracking-widest uppercase transition-all duration-300"
                 style={{
                   background: accent ? "linear-gradient(135deg, #8B6914, #C9A84C, #F5D98B)" : "transparent",
@@ -125,7 +140,7 @@ export default function InfoSections({ calcRef }: InfoSectionsProps) {
                   borderRadius: "3px"
                 }}
               >
-                {price === "Бесплатно" ? "Попробовать" : "Получить"}
+                {btnText}
               </button>
             </div>
           ))}

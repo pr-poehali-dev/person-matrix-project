@@ -161,11 +161,17 @@ export default function Cabinet() {
                     <h2 className="font-serif text-xl text-gray-900">Матрица для {activeCalc.birth_date}</h2>
                     <span className="text-xs text-gray-400">{new Date(activeCalc.created_at).toLocaleDateString("ru-RU")}</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-3 mb-4">
                     <NumBadge num={activeCalc.life_path} label="Жизненный путь" />
                     <NumBadge num={activeCalc.character_num} label="Характер" />
                     <NumBadge num={activeCalc.destiny} label="Судьба" />
                   </div>
+                  <Link to={`/result?date=${activeCalc.birth_date}`}
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors"
+                    style={{ background: "linear-gradient(135deg, #92400e, #d97706, #f59e0b)", color: "#fff" }}>
+                    <Icon name="ArrowRight" size={14} />
+                    Открыть полный анализ
+                  </Link>
                 </div>
 
                 {/* Full description based on life path */}
