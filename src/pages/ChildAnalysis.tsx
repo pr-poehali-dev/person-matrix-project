@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "@/components/ui/icon";
-import { getToken } from "@/lib/auth";
+import { getToken, saveChildCalc } from "@/lib/auth";
 import { checkPurchase, spend, getBalance } from "@/lib/payments";
 import {
   calcLifePath,
@@ -16,8 +16,9 @@ import ChildHero from "@/components/child/ChildHero";
 import ChildPaidContent from "@/components/child/ChildPaidContent";
 
 export default function ChildAnalysis() {
-  const [childName, setChildName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
+  const [searchParams] = useSearchParams();
+  const [childName, setChildName] = useState(searchParams.get("name") || "");
+  const [birthDate, setBirthDate] = useState(searchParams.get("date") || "");
   const [error, setError] = useState("");
 
   const [result, setResult] = useState<{
@@ -69,6 +70,7 @@ export default function ChildAnalysis() {
 
     const token = getToken();
     if (token && birthDate) {
+      saveChildCalc(birthDate, childName.trim(), lifePath, character, destiny, soulUrge);
       Promise.all([
         checkPurchase("child_analysis", { birth_date: birthDate }),
         getBalance()
@@ -81,6 +83,16 @@ export default function ChildAnalysis() {
       setPurchased(false);
     }
   }
+
+  const [autoCalcDone, setAutoCalcDone] = useState(false);
+
+  useEffect(() => {
+    const d = searchParams.get("date");
+    if (d && !autoCalcDone) {
+      setAutoCalcDone(true);
+      setTimeout(() => handleCalculate(), 0);
+    }
+  }, [autoCalcDone]);
 
   const handleBuy = async () => {
     if (!getToken()) { navigate("/auth"); return; }

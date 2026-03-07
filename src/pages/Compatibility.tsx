@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "@/components/ui/icon";
-import { getToken } from "@/lib/auth";
+import { getToken, saveCompatibilityCalc } from "@/lib/auth";
 import { checkPurchase, spend, getBalance, PRODUCT_PRICES } from "@/lib/payments";
 import { calcFullCompatibility, DESCRIPTIONS } from "@/lib/matrix";
 import type { FullCompatibilityResult, PythagorasMatrix } from "@/lib/matrix";
@@ -157,14 +157,16 @@ function DimensionCard({ icon, label, score }: { icon: string; label: string; sc
 }
 
 export default function Compatibility() {
-  const [date1, setDate1] = useState("");
-  const [date2, setDate2] = useState("");
+  const [searchParams] = useSearchParams();
+  const [date1, setDate1] = useState(searchParams.get("date1") || "");
+  const [date2, setDate2] = useState(searchParams.get("date2") || "");
   const [result, setResult] = useState<FullCompatibilityResult | null>(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [purchased, setPurchased] = useState(false);
   const [balance, setBalance] = useState(0);
   const [spending, setSpending] = useState(false);
+  const [autoCalcDone, setAutoCalcDone] = useState(false);
 
   function handleCalculate() {
     setError("");
@@ -185,6 +187,7 @@ export default function Compatibility() {
 
     const token = getToken();
     if (token && date1 && date2) {
+      saveCompatibilityCalc(date1, date2, r.person1.lifePath, r.person1.character, r.person1.destiny, r.overall);
       Promise.all([
         checkPurchase("compatibility", { birth_date: date1, birth_date2: date2 }),
         getBalance(),
@@ -198,6 +201,15 @@ export default function Compatibility() {
       setPurchased(false);
     }
   }
+
+  useEffect(() => {
+    const d1 = searchParams.get("date1");
+    const d2 = searchParams.get("date2");
+    if (d1 && d2 && !autoCalcDone) {
+      setAutoCalcDone(true);
+      setTimeout(() => handleCalculate(), 0);
+    }
+  }, [autoCalcDone]);
 
   const handleBuy = async () => {
     if (!getToken()) {

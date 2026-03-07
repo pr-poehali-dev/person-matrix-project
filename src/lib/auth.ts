@@ -48,5 +48,13 @@ export async function getMe() {
 }
 
 export async function saveCalculation(birth_date: string, life_path: number, character_num: number, destiny: number) {
-  return call("save-calculation", { birth_date, life_path, character_num, destiny });
+  return call("save-calculation", { birth_date, life_path, character_num, destiny, calc_type: "personal" });
+}
+
+export async function saveCompatibilityCalc(birth_date: string, birth_date2: string, life_path: number, character_num: number, destiny: number, overall_score: number) {
+  return call("save-calculation", { birth_date, birth_date2, life_path, character_num, destiny, overall_score, calc_type: "compatibility" });
+}
+
+export async function saveChildCalc(birth_date: string, child_name: string, life_path: number, character_num: number, destiny: number, soul_urge: number) {
+  return call("save-calculation", { birth_date, child_name, life_path, character_num, destiny, soul_urge, calc_type: "child" });
 }

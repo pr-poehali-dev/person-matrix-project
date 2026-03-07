@@ -20,7 +20,78 @@ type Calculation = {
   character_num: number;
   destiny: number;
   created_at: string;
+  calc_type: "personal" | "compatibility" | "child";
+  birth_date2: string | null;
+  child_name: string | null;
+  soul_urge: number | null;
+  overall_score: number | null;
 };
+
+type Purchase = {
+  id: number;
+  product: string;
+  birth_date: string | null;
+  birth_date2: string | null;
+  child_name: string | null;
+  amount: number;
+  created_at: string;
+};
+
+type CalcTab = "all" | "personal" | "compatibility" | "child";
+
+const TAB_CONFIG: Record<CalcTab, { label: string; icon: string }> = {
+  all: { label: "Все", icon: "LayoutGrid" },
+  personal: { label: "Личные", icon: "User" },
+  compatibility: { label: "Совместимость", icon: "Heart" },
+  child: { label: "Ребёнок", icon: "Baby" },
+};
+
+const TYPE_LABELS: Record<string, { label: string; icon: string; color: string; bg: string }> = {
+  personal: { label: "Личный", icon: "User", color: "text-amber-700", bg: "bg-amber-100" },
+  compatibility: { label: "Совместимость", icon: "Heart", color: "text-rose-600", bg: "bg-rose-100" },
+  child: { label: "Ребёнок", icon: "Baby", color: "text-violet-600", bg: "bg-violet-100" },
+};
+
+function isPurchased(calc: Calculation, purchases: Purchase[]): boolean {
+  if (calc.calc_type === "personal") {
+    return purchases.some(
+      p => p.product === "full_analysis" && p.birth_date === calc.birth_date
+    );
+  }
+  if (calc.calc_type === "compatibility") {
+    return purchases.some(
+      p => p.product === "compatibility" && p.birth_date === calc.birth_date && p.birth_date2 === calc.birth_date2
+    );
+  }
+  if (calc.calc_type === "child") {
+    return purchases.some(
+      p => p.product === "child_analysis" && p.birth_date === calc.birth_date
+    );
+  }
+  return false;
+}
+
+function getCalcLink(calc: Calculation): string {
+  if (calc.calc_type === "personal") {
+    return `/result?date=${calc.birth_date}`;
+  }
+  if (calc.calc_type === "compatibility" && calc.birth_date2) {
+    return `/compatibility?date1=${calc.birth_date}&date2=${calc.birth_date2}`;
+  }
+  if (calc.calc_type === "child") {
+    const nameParam = calc.child_name ? `&name=${encodeURIComponent(calc.child_name)}` : "";
+    return `/child?date=${calc.birth_date}${nameParam}`;
+  }
+  return "/";
+}
+
+function formatDate(d: string): string {
+  try {
+    return new Date(d).toLocaleDateString("ru-RU");
+  } catch {
+    return d;
+  }
+}
 
 function NumBadge({ num, label }: { num: number; label: string }) {
   const desc = DESCRIPTIONS[num];
@@ -28,7 +99,26 @@ function NumBadge({ num, label }: { num: number; label: string }) {
     <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex flex-col gap-1">
       <div className="text-2xl font-serif font-bold text-amber-700">{num}</div>
       <div className="text-xs font-medium text-amber-600 uppercase tracking-wide">{label}</div>
-      {desc && <div className="text-xs text-gray-500 mt-1">{desc.title} — {desc.tagline}</div>}
+      {desc && <div className="text-xs text-gray-500 mt-1">{desc.title}</div>}
+    </div>
+  );
+}
+
+function ScoreCircle({ score }: { score: number }) {
+  const size = 64;
+  const radius = (size - 6) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (score / 100) * circumference;
+  const color = score >= 70 ? "#22c55e" : score >= 40 ? "#f59e0b" : "#ef4444";
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90">
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#f3f4f6" strokeWidth={3} />
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={color} strokeWidth={3} strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset} />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="font-serif font-bold text-gray-900 text-sm">{score}%</span>
+      </div>
     </div>
   );
 }
@@ -37,17 +127,20 @@ export default function Cabinet() {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [calculations, setCalculations] = useState<Calculation[]>([]);
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCalc, setActiveCalc] = useState<Calculation | null>(null);
   const [balance, setBalance] = useState<number>(0);
+  const [tab, setTab] = useState<CalcTab>("all");
 
   useEffect(() => {
     if (!getToken()) { navigate("/auth"); return; }
     getMe().then(res => {
       if (res.status === 200 && typeof res.data === "object" && res.data !== null && "user" in res.data) {
-        const d = res.data as { user: User; calculations: Calculation[] };
+        const d = res.data as { user: User; calculations: Calculation[]; purchases: Purchase[] };
         setUser(d.user);
         setCalculations(d.calculations);
+        setPurchases(d.purchases || []);
         if (d.calculations.length > 0) setActiveCalc(d.calculations[0]);
         getBalance().then(res => { if (res.status === 200 && res.data?.balance !== undefined) setBalance(res.data.balance as number); });
       } else {
@@ -61,6 +154,15 @@ export default function Cabinet() {
     navigate("/");
   };
 
+  const filtered = tab === "all" ? calculations : calculations.filter(c => c.calc_type === tab);
+
+  const counts = {
+    all: calculations.length,
+    personal: calculations.filter(c => c.calc_type === "personal").length,
+    compatibility: calculations.filter(c => c.calc_type === "compatibility").length,
+    child: calculations.filter(c => c.calc_type === "child").length,
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -69,9 +171,285 @@ export default function Cabinet() {
     );
   }
 
+  const renderCalcTitle = (calc: Calculation) => {
+    if (calc.calc_type === "compatibility") {
+      return `${calc.birth_date} + ${calc.birth_date2}`;
+    }
+    if (calc.calc_type === "child" && calc.child_name) {
+      return calc.child_name;
+    }
+    return calc.birth_date;
+  };
+
+  const renderCalcSubtitle = (calc: Calculation) => {
+    if (calc.calc_type === "child" && calc.child_name) {
+      return calc.birth_date;
+    }
+    return formatDate(calc.created_at);
+  };
+
+  const renderCalcBadges = (calc: Calculation) => {
+    if (calc.calc_type === "compatibility" && calc.overall_score !== null) {
+      return (
+        <span
+          className="text-xs font-bold px-2 py-1 rounded-full"
+          style={{
+            backgroundColor: calc.overall_score >= 70 ? "#dcfce7" : calc.overall_score >= 40 ? "#fef3c7" : "#fecaca",
+            color: calc.overall_score >= 70 ? "#16a34a" : calc.overall_score >= 40 ? "#d97706" : "#dc2626",
+          }}
+        >
+          {calc.overall_score}%
+        </span>
+      );
+    }
+    return (
+      <div className="flex gap-1">
+        {[calc.life_path, calc.character_num, calc.destiny].filter(Boolean).map((n, i) => (
+          <span key={i} className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 text-xs flex items-center justify-center font-bold">
+            {n}
+          </span>
+        ))}
+      </div>
+    );
+  };
+
+  const renderDetail = (calc: Calculation) => {
+    const paid = isPurchased(calc, purchases);
+    const type = TYPE_LABELS[calc.calc_type] || TYPE_LABELS.personal;
+    const link = getCalcLink(calc);
+
+    if (calc.calc_type === "compatibility") {
+      return (
+        <div className="space-y-5">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-lg ${type.bg} flex items-center justify-center`}>
+                  <Icon name={type.icon} size={16} className={type.color} />
+                </div>
+                <div>
+                  <h2 className="font-serif text-xl text-gray-900">Совместимость</h2>
+                  <p className="text-xs text-gray-400">{calc.birth_date} и {calc.birth_date2}</p>
+                </div>
+              </div>
+              <span className="text-xs text-gray-400">{formatDate(calc.created_at)}</span>
+            </div>
+
+            <div className="flex items-center justify-center mb-5">
+              {calc.overall_score !== null && <ScoreCircle score={calc.overall_score} />}
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 mb-5">
+              <NumBadge num={calc.life_path} label="Путь 1" />
+              <NumBadge num={calc.character_num} label="Характер 1" />
+              <NumBadge num={calc.destiny} label="Судьба 1" />
+            </div>
+
+            {paid ? (
+              <Link to={link}
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors text-white"
+                style={{ background: "linear-gradient(135deg, #e11d48, #f43f5e, #fb7185)" }}>
+                <Icon name="ArrowRight" size={14} />
+                Открыть полный отчёт
+              </Link>
+            ) : (
+              <Link to={link}
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors border-2 border-rose-200 text-rose-600 hover:bg-rose-50">
+                <Icon name="Lock" size={14} />
+                Получить полный расчёт
+              </Link>
+            )}
+          </div>
+
+          {paid && (
+            <div className="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3">
+              <Icon name="CheckCircle" size={18} className="text-green-500 shrink-0" />
+              <span className="text-sm text-green-700">Полный отчёт оплачен и доступен</span>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (calc.calc_type === "child") {
+      return (
+        <div className="space-y-5">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-lg ${type.bg} flex items-center justify-center`}>
+                  <Icon name={type.icon} size={16} className={type.color} />
+                </div>
+                <div>
+                  <h2 className="font-serif text-xl text-gray-900">
+                    {calc.child_name ? `Профиль: ${calc.child_name}` : "Профиль ребёнка"}
+                  </h2>
+                  <p className="text-xs text-gray-400">{calc.birth_date}</p>
+                </div>
+              </div>
+              <span className="text-xs text-gray-400">{formatDate(calc.created_at)}</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <NumBadge num={calc.life_path} label="Жизненный путь" />
+              <NumBadge num={calc.character_num} label="Характер" />
+              <NumBadge num={calc.destiny} label="Судьба" />
+            </div>
+            {calc.soul_urge && (
+              <div className="mb-5">
+                <NumBadge num={calc.soul_urge} label="Душевное число" />
+              </div>
+            )}
+
+            {paid ? (
+              <Link to={link}
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors text-white"
+                style={{ background: "linear-gradient(135deg, #7c3aed, #8b5cf6, #a78bfa)" }}>
+                <Icon name="ArrowRight" size={14} />
+                Открыть полный анализ
+              </Link>
+            ) : (
+              <Link to={link}
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors border-2 border-violet-200 text-violet-600 hover:bg-violet-50">
+                <Icon name="Lock" size={14} />
+                Получить полный расчёт
+              </Link>
+            )}
+          </div>
+
+          {paid && (
+            <div className="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3">
+              <Icon name="CheckCircle" size={18} className="text-green-500 shrink-0" />
+              <span className="text-sm text-green-700">Полный отчёт оплачен и доступен</span>
+            </div>
+          )}
+
+          {DESCRIPTIONS[calc.life_path] && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center">
+                  <span className="font-serif text-lg font-bold text-violet-700">{calc.life_path}</span>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900">{DESCRIPTIONS[calc.life_path].title}</div>
+                  <div className="text-xs text-violet-600">{DESCRIPTIONS[calc.life_path].tagline}</div>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600 leading-relaxed">{DESCRIPTIONS[calc.life_path].character}</p>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-5">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <div className={`w-8 h-8 rounded-lg ${type.bg} flex items-center justify-center`}>
+                <Icon name={type.icon} size={16} className={type.color} />
+              </div>
+              <div>
+                <h2 className="font-serif text-xl text-gray-900">Матрица для {calc.birth_date}</h2>
+              </div>
+            </div>
+            <span className="text-xs text-gray-400">{formatDate(calc.created_at)}</span>
+          </div>
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <NumBadge num={calc.life_path} label="Жизненный путь" />
+            <NumBadge num={calc.character_num} label="Характер" />
+            <NumBadge num={calc.destiny} label="Судьба" />
+          </div>
+
+          {paid ? (
+            <Link to={link}
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors text-white"
+              style={{ background: "linear-gradient(135deg, #92400e, #d97706, #f59e0b)" }}>
+              <Icon name="ArrowRight" size={14} />
+              Открыть полный анализ
+            </Link>
+          ) : (
+            <Link to={link}
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors border-2 border-amber-200 text-amber-700 hover:bg-amber-50">
+              <Icon name="Lock" size={14} />
+              Получить полный расчёт
+            </Link>
+          )}
+        </div>
+
+        {paid && (
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3">
+            <Icon name="CheckCircle" size={18} className="text-green-500 shrink-0" />
+            <span className="text-sm text-green-700">Полный отчёт оплачен и доступен</span>
+          </div>
+        )}
+
+        {DESCRIPTIONS[calc.life_path] && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                <span className="font-serif text-lg font-bold text-amber-700">{calc.life_path}</span>
+              </div>
+              <div>
+                <div className="font-semibold text-gray-900">{DESCRIPTIONS[calc.life_path].title}</div>
+                <div className="text-xs text-amber-600">{DESCRIPTIONS[calc.life_path].tagline}</div>
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 leading-relaxed mb-4">
+              {DESCRIPTIONS[calc.life_path].character}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Сильные стороны</div>
+                <ul className="space-y-1.5">
+                  {DESCRIPTIONS[calc.life_path].strengths.map(s => (
+                    <li key={s} className="flex items-start gap-2 text-sm text-gray-700">
+                      <Icon name="Check" size={14} className="text-green-500 mt-0.5 shrink-0" />
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Сферы роста</div>
+                <ul className="space-y-1.5">
+                  {DESCRIPTIONS[calc.life_path].challenges.map(c => (
+                    <li key={c} className="flex items-start gap-2 text-sm text-gray-700">
+                      <Icon name="ArrowUpRight" size={14} className="text-amber-500 mt-0.5 shrink-0" />
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {DESCRIPTIONS[calc.life_path] && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Icon name="Briefcase" size={16} className="text-amber-600" />
+                <span className="font-semibold text-gray-800 text-sm">Карьера</span>
+              </div>
+              <p className="text-sm text-gray-600 leading-relaxed">{DESCRIPTIONS[calc.life_path].career}</p>
+            </div>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Icon name="Heart" size={16} className="text-rose-400" />
+                <span className="font-semibold text-gray-800 text-sm">Отношения</span>
+              </div>
+              <p className="text-sm text-gray-600 leading-relaxed">{DESCRIPTIONS[calc.life_path].relationships}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
       <header className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
@@ -98,7 +476,6 @@ export default function Cabinet() {
       </header>
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-8">
-        {/* Greeting */}
         <div className="mb-8">
           <h1 className="font-serif text-3xl text-gray-900 mb-1">
             Привет, {user?.name || "красавица"} 👋
@@ -107,147 +484,95 @@ export default function Cabinet() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: history list */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
-                <h2 className="font-semibold text-gray-800 text-sm">История расчётов</h2>
-                <span className="text-xs bg-amber-100 text-amber-700 rounded-full px-2 py-0.5">{calculations.length}</span>
+              <div className="px-4 py-3 border-b border-gray-100 flex gap-1 overflow-x-auto">
+                {(Object.keys(TAB_CONFIG) as CalcTab[]).map(t => (
+                  <button
+                    key={t}
+                    onClick={() => { setTab(t); setActiveCalc(null); }}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                      tab === t ? "bg-amber-100 text-amber-800" : "text-gray-500 hover:bg-gray-50"
+                    }`}
+                  >
+                    <Icon name={TAB_CONFIG[t].icon} size={13} />
+                    {TAB_CONFIG[t].label}
+                    {counts[t] > 0 && (
+                      <span className={`ml-0.5 text-[10px] rounded-full px-1.5 py-px ${
+                        tab === t ? "bg-amber-200 text-amber-800" : "bg-gray-100 text-gray-400"
+                      }`}>{counts[t]}</span>
+                    )}
+                  </button>
+                ))}
               </div>
 
-              {calculations.length === 0 ? (
+              {filtered.length === 0 ? (
                 <div className="px-5 py-10 text-center">
                   <div className="text-3xl mb-3">🔮</div>
-                  <p className="text-gray-400 text-sm mb-4">Расчётов пока нет</p>
-                  <Link to="/" className="text-sm text-amber-600 font-medium hover:underline">
-                    Сделать первый расчёт →
+                  <p className="text-gray-400 text-sm mb-4">
+                    {tab === "all" ? "Расчётов пока нет" : `Нет расчётов в категории «${TAB_CONFIG[tab].label}»`}
+                  </p>
+                  <Link to={tab === "compatibility" ? "/compatibility" : tab === "child" ? "/child" : "/"} className="text-sm text-amber-600 font-medium hover:underline">
+                    Сделать расчёт →
                   </Link>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-50">
-                  {calculations.map(calc => (
-                    <button
-                      key={calc.id}
-                      onClick={() => setActiveCalc(calc)}
-                      className="w-full px-5 py-4 flex items-center justify-between text-left transition-colors hover:bg-amber-50"
-                      style={{ background: activeCalc?.id === calc.id ? "#fffbeb" : undefined }}
-                    >
-                      <div>
-                        <div className="text-sm font-medium text-gray-800">{calc.birth_date}</div>
-                        <div className="text-xs text-gray-400 mt-0.5">
-                          {new Date(calc.created_at).toLocaleDateString("ru-RU")}
+                <div className="divide-y divide-gray-50 max-h-[480px] overflow-y-auto">
+                  {filtered.map(calc => {
+                    const type = TYPE_LABELS[calc.calc_type] || TYPE_LABELS.personal;
+                    const paid = isPurchased(calc, purchases);
+                    return (
+                      <button
+                        key={calc.id}
+                        onClick={() => setActiveCalc(calc)}
+                        className="w-full px-4 py-3.5 flex items-center gap-3 text-left transition-colors hover:bg-amber-50"
+                        style={{ background: activeCalc?.id === calc.id ? "#fffbeb" : undefined }}
+                      >
+                        <div className={`w-8 h-8 rounded-lg ${type.bg} flex items-center justify-center shrink-0`}>
+                          <Icon name={type.icon} size={14} className={type.color} />
                         </div>
-                      </div>
-                      <div className="flex gap-1.5">
-                        {[calc.life_path, calc.character_num, calc.destiny].map((n, i) => (
-                          <span key={i} className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 text-xs flex items-center justify-center font-bold">
-                            {n}
-                          </span>
-                        ))}
-                      </div>
-                    </button>
-                  ))}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-gray-800 truncate">{renderCalcTitle(calc)}</span>
+                            {paid && <Icon name="CheckCircle" size={12} className="text-green-500 shrink-0" />}
+                            {!paid && <Icon name="Lock" size={11} className="text-gray-300 shrink-0" />}
+                          </div>
+                          <div className="text-xs text-gray-400 mt-0.5">{renderCalcSubtitle(calc)}</div>
+                        </div>
+                        <div className="shrink-0">
+                          {renderCalcBadges(calc)}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
 
-            {/* CTA new calc */}
-            <Link to="/" className="mt-4 flex items-center justify-center gap-2 w-full py-3 rounded-xl border-2 border-dashed border-amber-200 text-amber-600 text-sm font-medium hover:bg-amber-50 transition-colors">
-              <Icon name="Plus" size={16} />
-              Новый расчёт
-            </Link>
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              <Link to="/" className="flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 border-dashed border-amber-200 text-amber-600 text-xs font-medium hover:bg-amber-50 transition-colors">
+                <Icon name="User" size={16} />
+                Личный
+              </Link>
+              <Link to="/compatibility" className="flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 border-dashed border-rose-200 text-rose-500 text-xs font-medium hover:bg-rose-50 transition-colors">
+                <Icon name="Heart" size={16} />
+                Пара
+              </Link>
+              <Link to="/child" className="flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 border-dashed border-violet-200 text-violet-500 text-xs font-medium hover:bg-violet-50 transition-colors">
+                <Icon name="Baby" size={16} />
+                Ребёнок
+              </Link>
+            </div>
           </div>
 
-          {/* Right: result detail */}
           <div className="lg:col-span-2">
             {activeCalc ? (
-              <div className="space-y-5">
-                {/* Numbers */}
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                  <div className="flex items-center justify-between mb-5">
-                    <h2 className="font-serif text-xl text-gray-900">Матрица для {activeCalc.birth_date}</h2>
-                    <span className="text-xs text-gray-400">{new Date(activeCalc.created_at).toLocaleDateString("ru-RU")}</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    <NumBadge num={activeCalc.life_path} label="Жизненный путь" />
-                    <NumBadge num={activeCalc.character_num} label="Характер" />
-                    <NumBadge num={activeCalc.destiny} label="Судьба" />
-                  </div>
-                  <Link to={`/result?date=${activeCalc.birth_date}`}
-                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors"
-                    style={{ background: "linear-gradient(135deg, #92400e, #d97706, #f59e0b)", color: "#fff" }}>
-                    <Icon name="ArrowRight" size={14} />
-                    Открыть полный анализ
-                  </Link>
-                </div>
-
-                {/* Full description based on life path */}
-                {DESCRIPTIONS[activeCalc.life_path] && (
-                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
-                        <span className="font-serif text-lg font-bold text-amber-700">{activeCalc.life_path}</span>
-                      </div>
-                      <div>
-                        <div className="font-semibold text-gray-900">{DESCRIPTIONS[activeCalc.life_path].title}</div>
-                        <div className="text-xs text-amber-600">{DESCRIPTIONS[activeCalc.life_path].tagline}</div>
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                      {DESCRIPTIONS[activeCalc.life_path].character}
-                    </p>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Сильные стороны</div>
-                        <ul className="space-y-1.5">
-                          {DESCRIPTIONS[activeCalc.life_path].strengths.map(s => (
-                            <li key={s} className="flex items-start gap-2 text-sm text-gray-700">
-                              <Icon name="Check" size={14} className="text-green-500 mt-0.5 shrink-0" />
-                              {s}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Сферы роста</div>
-                        <ul className="space-y-1.5">
-                          {DESCRIPTIONS[activeCalc.life_path].challenges.map(c => (
-                            <li key={c} className="flex items-start gap-2 text-sm text-gray-700">
-                              <Icon name="ArrowUpRight" size={14} className="text-amber-500 mt-0.5 shrink-0" />
-                              {c}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Career & relationships */}
-                {DESCRIPTIONS[activeCalc.life_path] && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Icon name="Briefcase" size={16} className="text-amber-600" />
-                        <span className="font-semibold text-gray-800 text-sm">Карьера</span>
-                      </div>
-                      <p className="text-sm text-gray-600 leading-relaxed">{DESCRIPTIONS[activeCalc.life_path].career}</p>
-                    </div>
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Icon name="Heart" size={16} className="text-rose-400" />
-                        <span className="font-semibold text-gray-800 text-sm">Отношения</span>
-                      </div>
-                      <p className="text-sm text-gray-600 leading-relaxed">{DESCRIPTIONS[activeCalc.life_path].relationships}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
+              renderDetail(activeCalc)
             ) : (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
                 <div className="text-5xl mb-4">✨</div>
-                <p className="text-gray-400 text-sm">Выберите расчёт слева, чтобы увидеть детали</p>
+                <h3 className="font-serif text-lg text-gray-800 mb-2">Выберите расчёт</h3>
+                <p className="text-gray-400 text-sm">Нажмите на любой расчёт слева, чтобы увидеть детали</p>
               </div>
             )}
           </div>
