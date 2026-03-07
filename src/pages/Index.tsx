@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { calcLifePath, calcCharacter, calcDestiny } from "@/lib/matrix";
+import { getToken, saveCalculation } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import CalcSection from "@/components/CalcSection";
@@ -56,6 +57,9 @@ export default function Index() {
       setTimeout(() => {
         document.getElementById("result-section")?.scrollIntoView({ behavior: "smooth" });
       }, 100);
+      if (getToken()) {
+        saveCalculation(birthDate, life, character, destiny);
+      }
     }
   };
 
