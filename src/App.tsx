@@ -11,6 +11,7 @@ import FullResult from "./pages/FullResult";
 import Compatibility from "./pages/Compatibility";
 import ChildAnalysis from "./pages/ChildAnalysis";
 import Balance from "./pages/Balance";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/compatibility" element={<Compatibility />} />
           <Route path="/child" element={<ChildAnalysis />} />
           <Route path="/balance" element={<Balance />} />
+          <Route path="/admin" element={<Admin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,0 +1,18 @@
+{
+  "tests": [
+    {
+      "name": "Admin login wrong credentials",
+      "method": "POST",
+      "path": "/",
+      "body": {"action": "login", "email": "wrong@test.com", "password": "wrong"},
+      "expectedStatus": 401
+    },
+    {
+      "name": "Admin stats unauthorized",
+      "method": "POST",
+      "path": "/",
+      "body": {"action": "stats"},
+      "expectedStatus": 401
+    }
+  ]
+}
