@@ -1,11 +1,15 @@
+import { useNavigate } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { DESCRIPTIONS, PersonDescription } from "@/lib/matrix";
+import { getToken } from "@/lib/auth";
 
 type ResultSectionProps = {
   result: { life: number; character: number; destiny: number };
 };
 
 export default function ResultSection({ result }: ResultSectionProps) {
+  const navigate = useNavigate();
+  const isLoggedIn = Boolean(getToken());
   const desc: PersonDescription = DESCRIPTIONS[result.life];
   if (!desc) return null;
 
@@ -41,6 +45,34 @@ export default function ResultSection({ result }: ResultSectionProps) {
           </div>
         ))}
       </div>
+
+      {!isLoggedIn && (
+        <div className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4"
+          style={{ background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.25)", borderRadius: "8px" }}>
+          <div className="flex items-center gap-3">
+            <Icon name="BookmarkPlus" size={18} style={{ color: "#C9A84C" }} />
+            <span className="font-golos text-sm" style={{ color: "rgba(255,255,255,0.65)" }}>
+              Войдите, чтобы сохранить результат и вернуться к нему позже
+            </span>
+          </div>
+          <div className="flex gap-3 shrink-0">
+            <button
+              onClick={() => navigate("/auth")}
+              className="px-5 py-2 font-golos text-xs font-medium tracking-wide uppercase transition-all duration-200 hover:scale-105"
+              style={{ background: "linear-gradient(135deg, #8B6914, #C9A84C, #F5D98B)", color: "#080C1F", borderRadius: "3px" }}
+            >
+              Войти
+            </button>
+            <button
+              onClick={() => navigate("/auth")}
+              className="px-5 py-2 font-golos text-xs font-medium tracking-wide uppercase transition-all duration-200"
+              style={{ border: "1px solid rgba(201,168,76,0.3)", color: "#C9A84C", borderRadius: "3px" }}
+            >
+              Регистрация
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="glass-card p-8 md:p-10 mb-6" style={{ borderRadius: "8px" }}>
         <h3 className="font-cormorant text-2xl mb-4" style={{ color: "#F5D98B" }}>Характеристика личности</h3>
