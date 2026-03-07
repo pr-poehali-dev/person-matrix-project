@@ -3,14 +3,9 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { getToken, saveChildCalc } from "@/lib/auth";
 import { checkPurchase, spend, getBalance } from "@/lib/payments";
-import {
-  calcLifePath,
-  calcCharacter,
-  calcDestiny,
-  calcSoulUrge,
-  DESCRIPTIONS,
-} from "@/lib/matrix";
-import type { PersonDescription } from "@/lib/matrix";
+import { DESCRIPTIONS } from "@/lib/matrix";
+import { calcFullChildProfile } from "@/lib/child-matrix";
+import type { ChildProfile } from "@/lib/child-matrix";
 import ChildForm from "@/components/child/ChildForm";
 import ChildHero from "@/components/child/ChildHero";
 import ChildPaidContent from "@/components/child/ChildPaidContent";
@@ -19,16 +14,12 @@ export default function ChildAnalysis() {
   const [searchParams] = useSearchParams();
   const [childName, setChildName] = useState(searchParams.get("name") || "");
   const [birthDate, setBirthDate] = useState(searchParams.get("date") || "");
+  const [motherDate, setMotherDate] = useState("");
+  const [fatherDate, setFatherDate] = useState("");
   const [error, setError] = useState("");
 
-  const [result, setResult] = useState<{
-    lifePath: number;
-    character: number;
-    destiny: number;
-    soulUrge: number;
-    desc: PersonDescription;
-    name: string;
-  } | null>(null);
+  const [profile, setProfile] = useState<ChildProfile | null>(null);
+  const [displayName, setDisplayName] = useState("");
   const navigate = useNavigate();
   const [purchased, setPurchased] = useState(false);
   const [balance, setBalance] = useState(0);
@@ -36,48 +27,49 @@ export default function ChildAnalysis() {
 
   function handleCalculate() {
     setError("");
-    setResult(null);
+    setProfile(null);
 
     if (!birthDate) {
       setError("Введите дату рождения ребёнка");
       return;
     }
 
-    const lifePath = calcLifePath(birthDate);
-    const character = calcCharacter(birthDate);
-    const destiny = calcDestiny(birthDate);
-    const soulUrge = calcSoulUrge(birthDate);
+    const result = calcFullChildProfile(
+      birthDate,
+      motherDate || undefined,
+      fatherDate || undefined,
+    );
 
-    if (!lifePath || !character || !destiny || !soulUrge) {
+    if (!result) {
       setError("Не удалось выполнить расчёт. Проверьте дату.");
       return;
     }
 
-    const desc = DESCRIPTIONS[lifePath];
-    if (!desc) {
-      setError("Описание для этого числа пока недоступно.");
-      return;
-    }
-
-    setResult({
-      lifePath,
-      character,
-      destiny,
-      soulUrge,
-      desc,
-      name: childName.trim(),
-    });
+    setProfile(result);
+    setDisplayName(childName.trim());
 
     const token = getToken();
     if (token && birthDate) {
-      saveChildCalc(birthDate, childName.trim(), lifePath, character, destiny, soulUrge);
+      saveChildCalc(
+        birthDate,
+        childName.trim(),
+        result.lifePath,
+        result.character,
+        result.destiny,
+        result.energy,
+      );
       Promise.all([
         checkPurchase("child_analysis", { birth_date: birthDate }),
-        getBalance()
+        getBalance(),
       ]).then(([purchaseRes, balanceRes]) => {
-        if (purchaseRes.status === 200 && purchaseRes.data?.purchased) setPurchased(true);
+        if (purchaseRes.status === 200 && purchaseRes.data?.purchased)
+          setPurchased(true);
         else setPurchased(false);
-        if (balanceRes.status === 200 && balanceRes.data?.balance !== undefined) setBalance(balanceRes.data.balance as number);
+        if (
+          balanceRes.status === 200 &&
+          balanceRes.data?.balance !== undefined
+        )
+          setBalance(balanceRes.data.balance as number);
       });
     } else {
       setPurchased(false);
@@ -95,21 +87,31 @@ export default function ChildAnalysis() {
   }, [autoCalcDone]);
 
   const handleBuy = async () => {
-    if (!getToken()) { navigate("/auth"); return; }
+    if (!getToken()) {
+      navigate("/auth");
+      return;
+    }
     setSpending(true);
-    const res = await spend("child_analysis", { birth_date: birthDate, child_name: childName });
+    const res = await spend("child_analysis", {
+      birth_date: birthDate,
+      child_name: childName,
+    });
     if (res.status === 200) setPurchased(true);
     else if (res.status === 402) navigate("/balance");
     setSpending(false);
   };
 
   function handleReset() {
-    setResult(null);
+    setProfile(null);
     setChildName("");
     setBirthDate("");
+    setMotherDate("");
+    setFatherDate("");
     setError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+
+  const desc = profile ? DESCRIPTIONS[profile.lifePath] : undefined;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -144,30 +146,40 @@ export default function ChildAnalysis() {
             Детский нумерологический профиль
           </h1>
           <p className="text-gray-400 text-sm max-w-lg mx-auto">
-            Узнайте таланты, характер и потенциал вашего ребёнка по дате рождения
+            Узнайте таланты, характер и потенциал вашего ребёнка по дате
+            рождения
           </p>
         </div>
 
-        {!result && (
+        {!profile && (
           <ChildForm
             childName={childName}
             birthDate={birthDate}
+            motherDate={motherDate}
+            fatherDate={fatherDate}
             error={error}
             onChildNameChange={setChildName}
             onBirthDateChange={setBirthDate}
+            onMotherDateChange={setMotherDate}
+            onFatherDateChange={setFatherDate}
             onCalculate={handleCalculate}
           />
         )}
 
-        {result && (
+        {profile && (
           <>
-            <ChildHero result={result} />
+            <ChildHero profile={profile} name={displayName} />
 
             <ChildPaidContent
-              result={result}
+              profile={profile}
+              desc={desc}
+              name={displayName}
               purchased={purchased}
               balance={balance}
               spending={spending}
+              birthDate={birthDate}
+              motherDate={motherDate}
+              fatherDate={fatherDate}
               onBuy={handleBuy}
               onReset={handleReset}
               onNavigateAuth={() => navigate("/auth")}

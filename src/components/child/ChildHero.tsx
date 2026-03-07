@@ -1,22 +1,27 @@
+import Icon from "@/components/ui/icon";
 import { DESCRIPTIONS } from "@/lib/matrix";
-import type { PersonDescription } from "@/lib/matrix";
+import { MATRIX_LABELS } from "@/lib/child-matrix";
+import type { ChildProfile } from "@/lib/child-matrix";
 import { Card, SectionHeading, NumberCard } from "./ChildPrimitives";
 
-type ChildResult = {
-  lifePath: number;
-  character: number;
-  destiny: number;
-  soulUrge: number;
-  desc: PersonDescription;
+type ChildHeroProps = {
+  profile: ChildProfile;
   name: string;
 };
 
-type ChildHeroProps = {
-  result: ChildResult;
-};
+export default function ChildHero({ profile, name }: ChildHeroProps) {
+  const displayName = name || "вашего ребёнка";
+  const desc = DESCRIPTIONS[profile.lifePath];
 
-export default function ChildHero({ result }: ChildHeroProps) {
-  const displayName = result.name || "вашего ребёнка";
+  const topQualities = Object.entries(profile.matrix)
+    .map(([digit, count]) => ({
+      digit: Number(digit),
+      count: count as number,
+      label: MATRIX_LABELS[Number(digit)] || "",
+    }))
+    .filter((q) => q.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 3);
 
   return (
     <>
@@ -27,7 +32,7 @@ export default function ChildHero({ result }: ChildHeroProps) {
         <div className="relative flex flex-col sm:flex-row sm:items-center gap-6">
           <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center shrink-0 mx-auto sm:mx-0">
             <span className="font-serif text-5xl sm:text-6xl font-bold text-purple-700">
-              {result.lifePath}
+              {profile.lifePath}
             </span>
           </div>
 
@@ -38,9 +43,11 @@ export default function ChildHero({ result }: ChildHeroProps) {
             <h2 className="font-serif text-3xl sm:text-4xl text-gray-900 mb-1">
               {`Профиль ${displayName}`}
             </h2>
-            <p className="text-gray-500 text-base leading-relaxed">
-              {result.desc.title} — {result.desc.tagline}
-            </p>
+            {desc && (
+              <p className="text-gray-500 text-base leading-relaxed">
+                {desc.title} — {desc.tagline}
+              </p>
+            )}
           </div>
         </div>
       </Card>
@@ -53,13 +60,85 @@ export default function ChildHero({ result }: ChildHeroProps) {
           iconBg="bg-amber-100"
           iconColor="text-amber-600"
         />
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <NumberCard num={result.lifePath} label="Жизненный путь" desc={DESCRIPTIONS[result.lifePath]} />
-          <NumberCard num={result.character} label="Характер" desc={DESCRIPTIONS[result.character]} />
-          <NumberCard num={result.destiny} label="Судьба" desc={DESCRIPTIONS[result.destiny]} />
-          <NumberCard num={result.soulUrge} label="Душа" desc={DESCRIPTIONS[result.soulUrge]} />
+        <div className="grid grid-cols-3 gap-3">
+          <NumberCard
+            num={profile.lifePath}
+            label="Жизненный путь"
+            desc={DESCRIPTIONS[profile.lifePath]}
+          />
+          <NumberCard
+            num={profile.character}
+            label="Характер"
+            desc={DESCRIPTIONS[profile.character]}
+          />
+          <NumberCard
+            num={profile.destiny}
+            label="Судьба"
+            desc={DESCRIPTIONS[profile.destiny]}
+          />
         </div>
       </Card>
+
+      <Card className="p-6 sm:p-8">
+        <SectionHeading
+          icon="Brain"
+          title="Тип мышления"
+          subtitle={profile.thinkingType.label}
+        />
+        <div className="bg-purple-50/60 border border-purple-100 rounded-xl p-5">
+          <p className="text-gray-700 text-sm leading-relaxed">
+            {profile.thinkingType.description}
+          </p>
+        </div>
+      </Card>
+
+      {topQualities.length > 0 && (
+        <Card className="p-6 sm:p-8">
+          <SectionHeading
+            icon="Zap"
+            title="Сильнейшие качества"
+            subtitle="Цифры с наибольшим присутствием в матрице"
+            iconBg="bg-amber-100"
+            iconColor="text-amber-600"
+          />
+          <div className="grid grid-cols-3 gap-3">
+            {topQualities.map((q) => (
+              <div
+                key={q.digit}
+                className="bg-gradient-to-br from-purple-50 to-purple-100/60 border border-purple-100 rounded-xl p-4 text-center"
+              >
+                <div className="text-2xl font-serif font-bold text-purple-700 mb-1">
+                  {q.digit}
+                </div>
+                <div className="text-xs font-semibold text-purple-600 uppercase tracking-wider">
+                  {q.label}
+                </div>
+                <div className="flex items-center justify-center gap-0.5 mt-2">
+                  {Array.from({ length: q.count }).map((_, i) => (
+                    <Icon
+                      key={i}
+                      name="Star"
+                      size={12}
+                      className="text-amber-400 fill-amber-400"
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-6 sm:p-8 text-center text-white">
+        <Icon name="Lock" size={28} className="mx-auto mb-3 opacity-80" />
+        <h3 className="font-serif text-xl sm:text-2xl mb-2">
+          Получите полный профиль ребёнка
+        </h3>
+        <p className="text-purple-100 text-sm max-w-md mx-auto">
+          Матрица Пифагора, индексы развития, карьерные склонности, риски,
+          жизненные циклы, совместимость с родителями и рекомендации
+        </p>
+      </div>
     </>
   );
 }

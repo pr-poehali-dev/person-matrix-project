@@ -1,30 +1,43 @@
+import { useState } from "react";
 import Icon from "@/components/ui/icon";
 import { Card } from "./ChildPrimitives";
 
 type ChildFormProps = {
   childName: string;
   birthDate: string;
+  motherDate: string;
+  fatherDate: string;
   error: string;
   onChildNameChange: (v: string) => void;
   onBirthDateChange: (v: string) => void;
+  onMotherDateChange: (v: string) => void;
+  onFatherDateChange: (v: string) => void;
   onCalculate: () => void;
 };
 
 export default function ChildForm({
   childName,
   birthDate,
+  motherDate,
+  fatherDate,
   error,
   onChildNameChange,
   onBirthDateChange,
+  onMotherDateChange,
+  onFatherDateChange,
   onCalculate,
 }: ChildFormProps) {
+  const [extraOpen, setExtraOpen] = useState(false);
+
   return (
     <Card className="p-6 sm:p-8 max-w-lg mx-auto">
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">
             Имя ребёнка
-            <span className="text-gray-400 font-normal ml-1">(необязательно)</span>
+            <span className="text-gray-400 font-normal ml-1">
+              (необязательно)
+            </span>
           </label>
           <div className="relative">
             <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -42,7 +55,7 @@ export default function ChildForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">
-            Дата рождения
+            Дата рождения ребёнка
           </label>
           <div className="relative">
             <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -56,6 +69,65 @@ export default function ChildForm({
             />
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setExtraOpen(!extraOpen)}
+          className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 font-medium transition-colors"
+        >
+          <Icon
+            name={extraOpen ? "ChevronUp" : "ChevronDown"}
+            size={16}
+          />
+          Дополнительно
+          <span className="text-gray-400 font-normal">
+            (даты рождения родителей)
+          </span>
+        </button>
+
+        {extraOpen && (
+          <div className="space-y-4 pt-1 border-t border-gray-100">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Дата рождения мамы
+                <span className="text-gray-400 font-normal ml-1">
+                  (необязательно)
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <Icon name="Heart" size={16} className="text-gray-400" />
+                </div>
+                <input
+                  type="date"
+                  value={motherDate}
+                  onChange={(e) => onMotherDateChange(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 transition-colors"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Дата рождения папы
+                <span className="text-gray-400 font-normal ml-1">
+                  (необязательно)
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <Icon name="Shield" size={16} className="text-gray-400" />
+                </div>
+                <input
+                  type="date"
+                  value={fatherDate}
+                  onChange={(e) => onFatherDateChange(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 transition-colors"
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {error && (

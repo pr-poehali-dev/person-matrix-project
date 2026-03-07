@@ -56,7 +56,7 @@ export function NumberCard({
 }: {
   num: number;
   label: string;
-  desc: PersonDescription | undefined;
+  desc?: PersonDescription | undefined;
 }) {
   return (
     <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-4 flex flex-col gap-1 text-center">
