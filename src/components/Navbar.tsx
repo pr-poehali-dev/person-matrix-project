@@ -7,6 +7,7 @@ const navItems = [
   { label: "Главная", path: "/" },
   { label: "Совместимость", path: "/compatibility" },
   { label: "Анализ ребёнка", path: "/child" },
+  { label: "Семья", path: "/family" },
 ];
 
 export default function Navbar() {

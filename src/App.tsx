@@ -12,6 +12,7 @@ import Compatibility from "./pages/Compatibility";
 import ChildAnalysis from "./pages/ChildAnalysis";
 import Balance from "./pages/Balance";
 import Admin from "./pages/Admin";
+import FamilyMatrix from "./pages/FamilyMatrix";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/child" element={<ChildAnalysis />} />
           <Route path="/balance" element={<Balance />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/family" element={<FamilyMatrix />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

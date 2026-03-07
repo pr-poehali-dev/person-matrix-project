@@ -22,6 +22,8 @@ export default function InfoSections({ calcRef }: InfoSectionsProps) {
       navigate("/compatibility");
     } else if (title === "Анализ ребёнка") {
       navigate("/child");
+    } else if (title === "Матрица семьи") {
+      navigate("/family");
     }
   };
 
@@ -96,12 +98,13 @@ export default function InfoSections({ calcRef }: InfoSectionsProps) {
           <h2 className="font-cormorant text-4xl md:text-5xl font-light" style={{ color: "#F5D98B" }}>Выберите свой анализ</h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
           {[
             { title: "Базовый", subtitle: "Бесплатно", items: ["3 числа матрицы", "Характер личности", "Сильные стороны", "Карьера и отношения"], accent: false, btnText: "Рассчитать" },
-            { title: "Полный анализ", subtitle: "490 ₽", items: ["Все 5 чисел матрицы", "Жизненные циклы и пики", "Здоровье и финансы", "Энергия личного года"], accent: true, btnText: "Подробнее" },
+            { title: "Полный анализ", subtitle: "490 ₽", items: ["Все 5 чисел матрицы", "Жизненные циклы и пики", "Здоровье и финансы", "Энергия личного года"], accent: false, btnText: "Подробнее" },
             { title: "Совместимость", subtitle: "690 ₽", items: ["Анализ пары", "3 шкалы совместимости", "Советы по отношениям", "Процент совместимости"], accent: false, btnText: "Проверить" },
             { title: "Анализ ребёнка", subtitle: "990 ₽", items: ["Профиль и таланты", "Советы родителям", "Сильные стороны", "Зоны развития"], accent: false, btnText: "Рассчитать" },
+            { title: "Матрица семьи", subtitle: "1 990 ₽", items: ["Анализ всей семьи", "Роли и совместимость", "Влияние на детей", "Рекомендации"], accent: true, btnText: "Анализировать" },
           ].map(({ title, subtitle, items, accent, btnText }) => (
             <div key={title}
               className="glass-card p-6 flex flex-col transition-all duration-300 hover:scale-105"
