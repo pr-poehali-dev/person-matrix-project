@@ -1,11 +1,23 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Icon from "@/components/ui/icon";
+import { getToken } from "@/lib/auth";
 
 const navItems = ["Главная", "Калькулятор", "Анализ", "Совместимость", "Методология"];
 
 export default function Navbar() {
   const [activeNav, setActiveNav] = useState("Главная");
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const isLoggedIn = Boolean(getToken());
+
+  const handleAuthClick = async () => {
+    if (isLoggedIn) {
+      navigate("/cabinet");
+    } else {
+      navigate("/auth");
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: "rgba(8,12,31,0.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(201,168,76,0.1)" }}>
@@ -31,7 +43,8 @@ export default function Navbar() {
           ))}
         </div>
         <button
-          className="hidden md:block px-5 py-2 font-golos text-sm font-medium transition-all duration-300 hover:scale-105"
+          onClick={handleAuthClick}
+          className="hidden md:flex items-center gap-1.5 px-5 py-2 font-golos text-sm font-medium transition-all duration-300 hover:scale-105"
           style={{
             background: "linear-gradient(135deg, #8B6914, #C9A84C, #F5D98B)",
             color: "#080C1F",
@@ -39,7 +52,8 @@ export default function Navbar() {
             letterSpacing: "0.05em"
           }}
         >
-          Войти
+          <Icon name={isLoggedIn ? "User" : "LogIn"} size={14} />
+          {isLoggedIn ? "Кабинет" : "Войти"}
         </button>
         <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)} style={{ color: "#C9A84C" }}>
           <Icon name={menuOpen ? "X" : "Menu"} size={22} />
@@ -53,6 +67,10 @@ export default function Navbar() {
               {item}
             </button>
           ))}
+          <button onClick={() => { handleAuthClick(); setMenuOpen(false); }}
+            className="font-golos text-sm text-left py-1 font-medium" style={{ color: "#C9A84C" }}>
+            {isLoggedIn ? "Личный кабинет" : "Войти / Регистрация"}
+          </button>
         </div>
       )}
     </nav>
