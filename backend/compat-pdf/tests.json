@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "name": "Generate without auth",
+      "method": "POST",
+      "path": "/",
+      "body": {"action": "generate", "date1": "1990-05-15", "date2": "1992-08-20"},
+      "expectedStatus": 401,
+      "bodyMatcher": "none"
+    }
+  ]
+}

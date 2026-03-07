@@ -411,6 +411,303 @@ export function calcCompatibility(date1: string, date2: string): CompatibilityRe
   };
 }
 
+// ─── Pythagoras Matrix ───────────────────────────────────────────────
+
+export type PythagorasMatrix = Record<number, number>; // digit 1-9 -> count
+
+export function calcPythagorasMatrix(date: string): PythagorasMatrix | null {
+  if (!date) return null;
+  const [y, m, d] = date.split("-").map(Number);
+  if (!y || !m || !d) return null;
+  const digits = `${d}${m}${y}`.split("").map(Number).filter(n => n > 0);
+  const matrix: PythagorasMatrix = {};
+  for (let i = 1; i <= 9; i++) matrix[i] = 0;
+  digits.forEach(d => { if (d >= 1 && d <= 9) matrix[d]++; });
+  return matrix;
+}
+
+// ─── Score helpers ───────────────────────────────────────────────────
+
+function clampScore(score: number): number {
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+function numberMatchScore(a: number, b: number): number {
+  const ra = a > 9 ? reduce(a) : a;
+  const rb = b > 9 ? reduce(b) : b;
+  const diff = Math.abs(ra - rb);
+  return clampScore(100 - diff * 15);
+}
+
+function matrixMatchScore(m1: PythagorasMatrix, m2: PythagorasMatrix): number {
+  let totalDiff = 0;
+  for (let i = 1; i <= 9; i++) totalDiff += Math.abs((m1[i] || 0) - (m2[i] || 0));
+  return clampScore(100 - totalDiff * 5);
+}
+
+// ─── Dimension-specific scores ──────────────────────────────────────
+
+function emotionScore(m1: PythagorasMatrix, m2: PythagorasMatrix): number {
+  // Digits 2, 6, 9
+  const diff = Math.abs((m1[2]||0) - (m2[2]||0)) + Math.abs((m1[6]||0) - (m2[6]||0)) + Math.abs((m1[9]||0) - (m2[9]||0));
+  return clampScore(100 - diff * 10);
+}
+
+function valueScore(m1: PythagorasMatrix, m2: PythagorasMatrix): number {
+  // Digits 1, 4, 7, 8
+  const diff = Math.abs((m1[1]||0) - (m2[1]||0)) + Math.abs((m1[4]||0) - (m2[4]||0)) + Math.abs((m1[7]||0) - (m2[7]||0)) + Math.abs((m1[8]||0) - (m2[8]||0));
+  return clampScore(100 - diff * 8);
+}
+
+function moneyScore(m1: PythagorasMatrix, m2: PythagorasMatrix): number {
+  // Digits 4, 8, 1
+  const diff = Math.abs((m1[4]||0) - (m2[4]||0)) + Math.abs((m1[8]||0) - (m2[8]||0)) + Math.abs((m1[1]||0) - (m2[1]||0));
+  return clampScore(100 - diff * 10);
+}
+
+function mindScore(m1: PythagorasMatrix, m2: PythagorasMatrix): number {
+  // Digits 3, 5, 7
+  const diff = Math.abs((m1[3]||0) - (m2[3]||0)) + Math.abs((m1[5]||0) - (m2[5]||0)) + Math.abs((m1[7]||0) - (m2[7]||0));
+  return clampScore(100 - diff * 10);
+}
+
+function intimacyScore(m1: PythagorasMatrix, m2: PythagorasMatrix): number {
+  // Digits 2, 5, 8
+  const diff = Math.abs((m1[2]||0) - (m2[2]||0)) + Math.abs((m1[5]||0) - (m2[5]||0)) + Math.abs((m1[8]||0) - (m2[8]||0));
+  return clampScore(100 - diff * 10);
+}
+
+// ─── Union type determination ───────────────────────────────────────
+
+const UNION_TYPES: Record<string, { name: string; description: string }> = {
+  "80-100": { name: "Гармоничный союз", description: "Ваши энергии естественно синхронизированы. Отношения строятся легко и приносят радость обоим партнёрам." },
+  "60-79": { name: "Развивающий союз", description: "Вы помогаете друг другу расти. Различия дополняют, а не разрушают. При осознанности — прекрасная пара." },
+  "40-59": { name: "Сложный союз", description: "Между вами много притяжения и одновременно трения. Такие отношения — мощный катализатор личного роста." },
+  "20-39": { name: "Испытательный союз", description: "Ваш союз — кармический урок. Отношения требуют огромной работы, но могут привести к глубочайшей трансформации." }
+};
+
+function getUnionType(index: number): { name: string; description: string } {
+  if (index >= 80) return UNION_TYPES["80-100"];
+  if (index >= 60) return UNION_TYPES["60-79"];
+  if (index >= 40) return UNION_TYPES["40-59"];
+  return UNION_TYPES["20-39"];
+}
+
+// ─── Pair archetype ─────────────────────────────────────────────────
+
+const PAIR_ARCHETYPES: Record<string, string> = {
+  "1-1": "Союз двух лидеров",
+  "1-2": "Союз лидера и дипломата",
+  "1-3": "Союз первопроходца и творца",
+  "1-4": "Союз новатора и архитектора",
+  "1-5": "Союз пионера и исследователя",
+  "1-6": "Союз лидера и хранителя",
+  "1-7": "Союз лидера и мудреца",
+  "1-8": "Союз двух генералов",
+  "1-9": "Союз лидера и мечтателя",
+  "2-2": "Союз двух дипломатов",
+  "2-3": "Союз дипломата и творца",
+  "2-4": "Союз чуткости и надёжности",
+  "2-5": "Союз интуиции и свободы",
+  "2-6": "Союз двух хранителей гармонии",
+  "2-7": "Союз чуткости и мудрости",
+  "2-8": "Союз дипломата и стратега",
+  "2-9": "Союз интуиции и мечты",
+  "3-3": "Союз двух творцов",
+  "3-4": "Союз творца и архитектора",
+  "3-5": "Союз вдохновения и приключений",
+  "3-6": "Союз творца и хранителя",
+  "3-7": "Союз творца и мудреца",
+  "3-8": "Союз творца и стратега",
+  "3-9": "Союз вдохновения и визионера",
+  "4-4": "Союз двух строителей",
+  "4-5": "Союз стабильности и перемен",
+  "4-6": "Союз архитектора и хранителя",
+  "4-7": "Союз практика и мыслителя",
+  "4-8": "Союз строителей империи",
+  "4-9": "Союз практика и визионера",
+  "5-5": "Союз двух искателей приключений",
+  "5-6": "Союз свободы и ответственности",
+  "5-7": "Союз исследователя и мудреца",
+  "5-8": "Союз авантюриста и стратега",
+  "5-9": "Союз свободы и мечты",
+  "6-6": "Союз двух хранителей очага",
+  "6-7": "Союз сердца и разума",
+  "6-8": "Союз заботы и силы",
+  "6-9": "Союз гармонии и идеалов",
+  "7-7": "Союз двух мудрецов",
+  "7-8": "Союз мудреца и стратега",
+  "7-9": "Союз мудрости и мечты",
+  "8-8": "Союз двух властителей",
+  "8-9": "Союз силы и мечты",
+  "9-9": "Союз двух визионеров"
+};
+
+function getPairArchetype(lp1: number, lp2: number): string {
+  const a = lp1 > 9 ? reduce(lp1) : lp1;
+  const b = lp2 > 9 ? reduce(lp2) : lp2;
+  const key = a <= b ? `${a}-${b}` : `${b}-${a}`;
+  return PAIR_ARCHETYPES[key] || "Уникальный союз";
+}
+
+// ─── Karmic connection check ────────────────────────────────────────
+
+function checkKarmicConnection(date1: string, date2: string): { isKarmic: boolean; reasons: string[] } {
+  const d1 = calcDestiny(date1), d2 = calcDestiny(date2);
+  const lc1 = calcLifeCycles(date1), lc2 = calcLifeCycles(date2);
+  const m1 = calcPythagorasMatrix(date1), m2 = calcPythagorasMatrix(date2);
+  const reasons: string[] = [];
+
+  if (d1 && d2 && d1 === d2) reasons.push("Совпадение чисел судьбы — глубокая кармическая связь");
+  if (lc1 && lc2 && lc1[0].number === lc2[0].number) reasons.push("Совпадение первого жизненного цикла — связь из прошлого");
+  if (m1 && m2) {
+    let matches = 0;
+    for (let i = 1; i <= 9; i++) if (m1[i] === m2[i] && m1[i] > 0) matches++;
+    if (matches >= 5) reasons.push("Зеркальные матрицы — судьбоносная встреча");
+  }
+
+  return { isKarmic: reasons.length > 0, reasons };
+}
+
+// ─── Recommendations ────────────────────────────────────────────────
+
+const COMPAT_RECOMMENDATIONS: Record<string, { strengths: string[]; risks: string[]; advice: string[] }> = {
+  high: {
+    strengths: ["Глубокое взаимопонимание на интуитивном уровне", "Совпадение жизненных ценностей и приоритетов", "Естественная поддержка и взаимное вдохновение"],
+    risks: ["Привыкание и снижение усилий в отношениях", "Избегание конфликтов вместо их решения", "Зависимость от партнёра"],
+    advice: ["Продолжайте развиваться как личности", "Создавайте совместные проекты и цели", "Не забывайте удивлять друг друга"]
+  },
+  medium: {
+    strengths: ["Взаимное дополнение качеств", "Возможность учиться друг у друга", "Баланс между близостью и свободой"],
+    risks: ["Непонимание мотивов партнёра", "Разное отношение к деньгам или быту", "Конфликты из-за разных подходов к жизни"],
+    advice: ["Регулярно обсуждайте ожидания и чувства", "Ищите компромиссы в спорных вопросах", "Уважайте различия — они обогащают союз"]
+  },
+  low: {
+    strengths: ["Мощный потенциал для личного роста", "Интенсивность эмоций и страсти", "Возможность преодолеть кармические уроки"],
+    risks: ["Частые конфликты и недопонимание", "Борьба за власть в отношениях", "Эмоциональное истощение"],
+    advice: ["Обратитесь к семейному психологу", "Установите чёткие границы и правила", "Фокусируйтесь на благодарности, а не претензиях"]
+  }
+};
+
+function getRecommendationLevel(index: number): string {
+  if (index >= 65) return "high";
+  if (index >= 40) return "medium";
+  return "low";
+}
+
+// ─── Full compatibility result ──────────────────────────────────────
+
+export type FullCompatibilityResult = {
+  person1: { lifePath: number; character: number; destiny: number; soulUrge: number; matrix: PythagorasMatrix };
+  person2: { lifePath: number; character: number; destiny: number; soulUrge: number; matrix: PythagorasMatrix };
+  overallIndex: number;
+  unionType: { name: string; description: string };
+  pairArchetype: string;
+  scores: {
+    lifePath: number;
+    character: number;
+    destiny: number;
+    matrix: number;
+    psychological: number;
+    emotional: number;
+    values: number;
+    financial: number;
+    intellectual: number;
+    intimacy: number;
+    family: number;
+    conflict: number;
+  };
+  lifeCycleCompat: number;
+  karmic: { isKarmic: boolean; reasons: string[] };
+  recommendations: { strengths: string[]; risks: string[]; advice: string[] };
+  freeSummary: { dynamic: string; strength: string; risk: string };
+};
+
+export function calcFullCompatibility(date1: string, date2: string): FullCompatibilityResult | null {
+  const lp1 = calcLifePath(date1), ch1 = calcCharacter(date1), d1 = calcDestiny(date1), su1 = calcSoulUrge(date1);
+  const lp2 = calcLifePath(date2), ch2 = calcCharacter(date2), d2 = calcDestiny(date2), su2 = calcSoulUrge(date2);
+  const m1 = calcPythagorasMatrix(date1), m2 = calcPythagorasMatrix(date2);
+  const lc1 = calcLifeCycles(date1), lc2 = calcLifeCycles(date2);
+
+  if (!lp1 || !ch1 || !d1 || !su1 || !lp2 || !ch2 || !d2 || !su2 || !m1 || !m2) return null;
+
+  const lpScore = numberMatchScore(lp1, lp2);
+  const chScore = numberMatchScore(ch1, ch2);
+  const dScore = numberMatchScore(d1, d2);
+  const mScore = matrixMatchScore(m1, m2);
+
+  const overallIndex = clampScore(Math.round((lpScore + chScore + dScore + mScore) / 4));
+
+  const psychScore = clampScore(Math.round((chScore + emotionScore(m1, m2)) / 2));
+  const emoScore = emotionScore(m1, m2);
+  const valScore = valueScore(m1, m2);
+  const finScore = moneyScore(m1, m2);
+  const intScore = mindScore(m1, m2);
+  const intmScore = intimacyScore(m1, m2);
+  const famScore = clampScore(Math.round((emoScore + valScore + finScore) / 3));
+  const conflictIndex = clampScore(100 - overallIndex);
+
+  let lifeCycleCompat = 50;
+  if (lc1 && lc2) {
+    let cycleDiff = 0;
+    for (let i = 0; i < Math.min(lc1.length, lc2.length); i++) {
+      cycleDiff += Math.abs(lc1[i].number - lc2[i].number);
+    }
+    lifeCycleCompat = clampScore(100 - cycleDiff * 10);
+  }
+
+  const karmic = checkKarmicConnection(date1, date2);
+  const recLevel = getRecommendationLevel(overallIndex);
+  const recommendations = COMPAT_RECOMMENDATIONS[recLevel];
+
+  // Free summary
+  const dynamicTexts: Record<string, string> = {
+    high: "Ваша пара обладает высоким потенциалом гармонии — энергии дополняют друг друга",
+    medium: "Ваш союз — это путь взаимного обогащения через принятие различий",
+    low: "Ваши отношения — мощный катализатор трансформации для обоих партнёров"
+  };
+  const strengthTexts: Record<string, string> = {
+    high: "Глубокое взаимопонимание и совпадение ценностей",
+    medium: "Взаимное дополнение — каждый привносит то, чего не хватает другому",
+    low: "Интенсивность и страсть — вместе вы не стоите на месте"
+  };
+  const riskTexts: Record<string, string> = {
+    high: "Слишком комфортная зона — важно не останавливаться в развитии",
+    medium: "Разные подходы к жизни могут создавать напряжение",
+    low: "Конфликты и борьба за лидерство могут истощать обоих"
+  };
+
+  return {
+    person1: { lifePath: lp1, character: ch1, destiny: d1, soulUrge: su1, matrix: m1 },
+    person2: { lifePath: lp2, character: ch2, destiny: d2, soulUrge: su2, matrix: m2 },
+    overallIndex,
+    unionType: getUnionType(overallIndex),
+    pairArchetype: getPairArchetype(lp1, lp2),
+    scores: {
+      lifePath: lpScore,
+      character: chScore,
+      destiny: dScore,
+      matrix: mScore,
+      psychological: psychScore,
+      emotional: emoScore,
+      values: valScore,
+      financial: finScore,
+      intellectual: intScore,
+      intimacy: intmScore,
+      family: famScore,
+      conflict: conflictIndex,
+    },
+    lifeCycleCompat,
+    karmic,
+    recommendations,
+    freeSummary: {
+      dynamic: dynamicTexts[recLevel],
+      strength: strengthTexts[recLevel],
+      risk: riskTexts[recLevel]
+    }
+  };
+}
+
 export const LEVEL_LABELS: Record<string, { label: string; color: string; percent: number }> = {
   perfect: { label: "Идеальная", color: "#22c55e", percent: 95 },
   good: { label: "Хорошая", color: "#84cc16", percent: 75 },
