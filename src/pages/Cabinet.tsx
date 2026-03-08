@@ -20,7 +20,7 @@ type Calculation = {
   character_num: number;
   destiny: number;
   created_at: string;
-  calc_type: "personal" | "compatibility" | "child";
+  calc_type: "personal" | "compatibility" | "child" | "destiny";
   birth_date2: string | null;
   child_name: string | null;
   soul_urge: number | null;
@@ -37,17 +37,19 @@ type Purchase = {
   created_at: string;
 };
 
-type CalcTab = "all" | "personal" | "compatibility" | "child";
+type CalcTab = "all" | "personal" | "compatibility" | "child" | "destiny";
 
 const TAB_CONFIG: Record<CalcTab, { label: string; icon: string }> = {
   all: { label: "Все", icon: "LayoutGrid" },
   personal: { label: "Личные", icon: "User" },
+  destiny: { label: "Карта судьбы", icon: "Map" },
   compatibility: { label: "Совместимость", icon: "Heart" },
   child: { label: "Ребёнок", icon: "Baby" },
 };
 
 const TYPE_LABELS: Record<string, { label: string; icon: string; color: string; bg: string }> = {
   personal: { label: "Личный", icon: "User", color: "text-amber-700", bg: "bg-amber-100" },
+  destiny: { label: "Карта судьбы", icon: "Map", color: "text-indigo-600", bg: "bg-indigo-100" },
   compatibility: { label: "Совместимость", icon: "Heart", color: "text-rose-600", bg: "bg-rose-100" },
   child: { label: "Ребёнок", icon: "Baby", color: "text-violet-600", bg: "bg-violet-100" },
 };
@@ -68,6 +70,11 @@ function isPurchased(calc: Calculation, purchases: Purchase[]): boolean {
       p => p.product === "child_analysis" && p.birth_date === calc.birth_date
     );
   }
+  if (calc.calc_type === "destiny") {
+    return purchases.some(
+      p => p.product === "destiny_map" && p.birth_date === calc.birth_date
+    );
+  }
   return false;
 }
 
@@ -81,6 +88,9 @@ function getCalcLink(calc: Calculation): string {
   if (calc.calc_type === "child") {
     const nameParam = calc.child_name ? `&name=${encodeURIComponent(calc.child_name)}` : "";
     return `/child?date=${calc.birth_date}${nameParam}`;
+  }
+  if (calc.calc_type === "destiny") {
+    return `/destiny?date=${calc.birth_date}`;
   }
   return "/";
 }
@@ -159,6 +169,7 @@ export default function Cabinet() {
   const counts = {
     all: calculations.length,
     personal: calculations.filter(c => c.calc_type === "personal").length,
+    destiny: calculations.filter(c => c.calc_type === "destiny").length,
     compatibility: calculations.filter(c => c.calc_type === "compatibility").length,
     child: calculations.filter(c => c.calc_type === "child").length,
   };

@@ -46,6 +46,7 @@ export const PRODUCT_PRICES: Record<string, number> = {
   full_analysis: 490,
   compatibility: 690,
   child_analysis: 990,
+  destiny_map: 1490,
   family_matrix: 1990,
 };
 
@@ -53,5 +54,6 @@ export const PRODUCT_NAMES: Record<string, string> = {
   full_analysis: "Полный анализ личности",
   compatibility: "Анализ совместимости",
   child_analysis: "Анализ ребёнка",
+  destiny_map: "Полная карта судьбы",
   family_matrix: "Матрица судьбы семьи",
 };

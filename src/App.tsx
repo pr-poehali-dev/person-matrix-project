@@ -13,6 +13,7 @@ import ChildAnalysis from "./pages/ChildAnalysis";
 import Balance from "./pages/Balance";
 import Admin from "./pages/Admin";
 import FamilyMatrix from "./pages/FamilyMatrix";
+import DestinyMap from "./pages/DestinyMap";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/balance" element={<Balance />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/family" element={<FamilyMatrix />} />
+          <Route path="/destiny" element={<DestinyMap />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
