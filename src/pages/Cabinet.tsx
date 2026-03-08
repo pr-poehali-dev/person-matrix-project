@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getMe, logout, getToken } from "@/lib/auth";
-import { getBalance, createPayment, PRODUCT_PRICES } from "@/lib/payments";
+import { getBalance, PRODUCT_PRICES } from "@/lib/payments";
 import Icon from "@/components/ui/icon";
 
 type User = {
@@ -161,10 +161,6 @@ const PAID_TOOLS: ToolItem[] = [
   },
 ];
 
-function hasPurchase(purchases: Purchase[], product: string): boolean {
-  return purchases.some(p => p.product === product);
-}
-
 function formatPrice(price: number): string {
   return price.toLocaleString("ru-RU") + " ₽";
 }
@@ -175,7 +171,6 @@ export default function Cabinet() {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [balance, setBalance] = useState<number>(0);
-  const [paying, setPaying] = useState<string | null>(null);
 
   useEffect(() => {
     if (!getToken()) { navigate("/auth"); return; }
@@ -198,21 +193,6 @@ export default function Cabinet() {
     navigate("/");
   };
 
-  const handlePay = async (tool: ToolItem) => {
-    if (!tool.price) return;
-    setPaying(tool.id);
-    if (balance >= tool.price) {
-      navigate(tool.route);
-    } else {
-      const needed = tool.price - balance;
-      const res = await createPayment(needed, window.location.href);
-      if (res.status === 200 && res.data?.url) {
-        window.location.href = res.data.url as string;
-      }
-    }
-    setPaying(null);
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -221,122 +201,53 @@ export default function Cabinet() {
     );
   }
 
-  const renderToolCard = (tool: ToolItem) => {
-    if (tool.free) {
-      return (
-        <div key={tool.id} className="bg-white rounded-2xl soft-shadow p-6 flex flex-col gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5">
-          <div className="flex items-start justify-between">
-            <div className={`w-11 h-11 rounded-xl ${tool.bg} flex items-center justify-center`}>
-              <Icon name={tool.icon} size={22} className={tool.color} />
-            </div>
-            <span className="text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full">
-              Бесплатно
-            </span>
-          </div>
-          <div>
-            <h3 className="font-golos font-semibold text-base text-[#4A3D7A] mb-1">{tool.title}</h3>
-            <p className="font-golos text-sm text-gray-400 leading-relaxed">{tool.description}</p>
-          </div>
-          <button
-            onClick={() => navigate(tool.route)}
-            className="mt-auto inline-flex items-center justify-center gap-2 gradient-primary text-white font-golos text-sm font-medium py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
-          >
-            Пройти тест
-            <Icon name="ArrowRight" size={15} />
-          </button>
+  const renderFreeCard = (tool: ToolItem) => (
+    <div key={tool.id} className="bg-white rounded-2xl soft-shadow p-6 flex flex-col gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5">
+      <div className="flex items-start justify-between">
+        <div className={`w-11 h-11 rounded-xl ${tool.bg} flex items-center justify-center`}>
+          <Icon name={tool.icon} size={22} className={tool.color} />
         </div>
-      );
-    }
-
-    const purchased = tool.product ? hasPurchase(purchases, tool.product) : false;
-    const canAfford = tool.price !== undefined && balance >= tool.price;
-
-    if (purchased) {
-      return (
-        <div key={tool.id} className="bg-white rounded-2xl soft-shadow p-6 flex flex-col gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5">
-          <div className="flex items-start justify-between">
-            <div className={`w-11 h-11 rounded-xl ${tool.bg} flex items-center justify-center`}>
-              <Icon name={tool.icon} size={22} className={tool.color} />
-            </div>
-            <span className="text-xs font-medium text-[#6C5BA7] bg-[#F4F2FA] border border-[#E8E4F5] px-2.5 py-1 rounded-full flex items-center gap-1">
-              <Icon name="CheckCircle" size={11} />
-              Оплачено
-            </span>
-          </div>
-          <div>
-            <h3 className="font-golos font-semibold text-base text-[#4A3D7A] mb-1">{tool.title}</h3>
-            <p className="font-golos text-sm text-gray-400 leading-relaxed">{tool.description}</p>
-          </div>
-          <button
-            onClick={() => navigate(tool.route)}
-            className="mt-auto inline-flex items-center justify-center gap-2 bg-[#6C5BA7] text-white font-golos text-sm font-medium py-2.5 rounded-xl transition-all duration-200 hover:bg-[#5A4B95] active:scale-[0.97]"
-          >
-            Открыть результат
-            <Icon name="ArrowRight" size={15} />
-          </button>
-        </div>
-      );
-    }
-
-    if (canAfford) {
-      return (
-        <div key={tool.id} className="bg-white rounded-2xl soft-shadow p-6 flex flex-col gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5">
-          <div className="flex items-start justify-between">
-            <div className={`w-11 h-11 rounded-xl ${tool.bg} flex items-center justify-center`}>
-              <Icon name={tool.icon} size={22} className={tool.color} />
-            </div>
-            <span className="text-xs font-medium text-gray-500 bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-full">
-              {tool.price !== undefined ? formatPrice(tool.price) : ""}
-            </span>
-          </div>
-          <div>
-            <h3 className="font-golos font-semibold text-base text-[#4A3D7A] mb-1">{tool.title}</h3>
-            <p className="font-golos text-sm text-gray-400 leading-relaxed">{tool.description}</p>
-          </div>
-          <button
-            onClick={() => handlePay(tool)}
-            disabled={paying === tool.id}
-            className="mt-auto inline-flex items-center justify-center gap-2 gradient-primary text-white font-golos text-sm font-medium py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.97] disabled:opacity-60"
-          >
-            <Icon name="CreditCard" size={15} />
-            {paying === tool.id ? "Обработка..." : `Оплатить и пройти — ${tool.price !== undefined ? formatPrice(tool.price) : ""}`}
-          </button>
-        </div>
-      );
-    }
-
-    return (
-      <div key={tool.id} className="bg-white rounded-2xl soft-shadow p-6 flex flex-col gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5">
-        <div className="flex items-start justify-between">
-          <div className={`w-11 h-11 rounded-xl ${tool.bg} flex items-center justify-center`}>
-            <Icon name={tool.icon} size={22} className={tool.color} />
-          </div>
-          <span className="text-xs font-medium text-gray-500 bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-full">
-            {tool.price !== undefined ? formatPrice(tool.price) : ""}
-          </span>
-        </div>
-        <div>
-          <h3 className="font-golos font-semibold text-base text-[#4A3D7A] mb-1">{tool.title}</h3>
-          <p className="font-golos text-sm text-gray-400 leading-relaxed">{tool.description}</p>
-        </div>
-        <div className="mt-auto space-y-2">
-          <div className="bg-[#F9F7FF] border border-[#E8E4F5] rounded-xl p-3 text-center">
-            <p className="font-golos text-xs text-gray-500 mb-1">Недостаточно средств</p>
-            <p className="font-golos text-xs text-[#6C5BA7]">
-              Баланс: {formatPrice(balance)} · Нужно ещё: {tool.price !== undefined ? formatPrice(tool.price - balance) : ""}
-            </p>
-          </div>
-          <Link
-            to="/balance"
-            className="flex items-center justify-center gap-2 bg-[#6C5BA7] text-white font-golos text-sm font-medium py-2.5 rounded-xl transition-all duration-200 hover:bg-[#5A4B95] active:scale-[0.97]"
-          >
-            <Icon name="Wallet" size={15} />
-            Пополнить баланс
-          </Link>
-        </div>
+        <span className="text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full">
+          Бесплатно
+        </span>
       </div>
-    );
-  };
+      <div>
+        <h3 className="font-golos font-semibold text-base text-[#4A3D7A] mb-1">{tool.title}</h3>
+        <p className="font-golos text-sm text-gray-400 leading-relaxed">{tool.description}</p>
+      </div>
+      <button
+        onClick={() => navigate(tool.route)}
+        className="mt-auto inline-flex items-center justify-center gap-2 gradient-primary text-white font-golos text-sm font-medium py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
+      >
+        Пройти тест
+        <Icon name="ArrowRight" size={15} />
+      </button>
+    </div>
+  );
+
+  const renderPaidCard = (tool: ToolItem) => (
+    <div key={tool.id} className="bg-white rounded-2xl soft-shadow p-6 flex flex-col gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5">
+      <div className="flex items-start justify-between">
+        <div className={`w-11 h-11 rounded-xl ${tool.bg} flex items-center justify-center`}>
+          <Icon name={tool.icon} size={22} className={tool.color} />
+        </div>
+        <span className="text-xs font-medium text-gray-500 bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-full">
+          {tool.price !== undefined ? formatPrice(tool.price) : ""}
+        </span>
+      </div>
+      <div>
+        <h3 className="font-golos font-semibold text-base text-[#4A3D7A] mb-1">{tool.title}</h3>
+        <p className="font-golos text-sm text-gray-400 leading-relaxed">{tool.description}</p>
+      </div>
+      <button
+        onClick={() => navigate(tool.route)}
+        className="mt-auto inline-flex items-center justify-center gap-2 gradient-primary text-white font-golos text-sm font-medium py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
+      >
+        Пройти — {tool.price !== undefined ? formatPrice(tool.price) : ""}
+        <Icon name="ArrowRight" size={15} />
+      </button>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -376,6 +287,26 @@ export default function Cabinet() {
           <p className="text-gray-400 text-sm font-golos">Выберите тест или инструмент для анализа</p>
         </div>
 
+        {purchases.length > 0 && (
+          <Link
+            to="/history"
+            className="mb-8 bg-white rounded-2xl soft-shadow p-5 flex items-center gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5 group block"
+          >
+            <div className="w-12 h-12 rounded-xl bg-[#F4F2FA] flex items-center justify-center flex-shrink-0">
+              <Icon name="Clock" size={22} className="text-[#6C5BA7]" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-golos font-semibold text-[15px] text-[#4A3D7A]">Мои результаты</h3>
+              <p className="font-golos text-sm text-gray-400">
+                {purchases.length} {purchases.length === 1 ? "анализ" : purchases.length < 5 ? "анализа" : "анализов"} — нажмите, чтобы посмотреть
+              </p>
+            </div>
+            <div className="w-8 h-8 rounded-lg bg-[#F4F2FA] flex items-center justify-center group-hover:bg-[#6C5BA7] transition-colors flex-shrink-0">
+              <Icon name="ArrowRight" size={14} className="text-[#6C5BA7] group-hover:text-white transition-colors" />
+            </div>
+          </Link>
+        )}
+
         <section className="mb-10">
           <div className="flex items-center gap-2 mb-5">
             <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
@@ -384,7 +315,7 @@ export default function Cabinet() {
             <h2 className="font-golos text-lg font-semibold text-gray-800">Бесплатные тесты</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {FREE_TESTS.map(renderToolCard)}
+            {FREE_TESTS.map(renderFreeCard)}
           </div>
         </section>
 
@@ -396,7 +327,7 @@ export default function Cabinet() {
             <h2 className="font-golos text-lg font-semibold text-gray-800">Платные инструменты анализа</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {PAID_TOOLS.map(renderToolCard)}
+            {PAID_TOOLS.map(renderPaidCard)}
           </div>
         </section>
       </main>
