@@ -22,11 +22,11 @@ export function SectionHeading({
 }) {
   return (
     <div className="flex items-start gap-3 mb-5">
-      <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
-        <Icon name={icon} size={20} className="text-amber-600" />
+      <div className="w-10 h-10 rounded-xl bg-[#F4F2FA] flex items-center justify-center shrink-0 mt-0.5">
+        <Icon name={icon} size={20} className="text-[#6C5BA7]" />
       </div>
       <div>
-        <h2 className="font-serif text-xl sm:text-2xl text-gray-900 leading-tight">
+        <h2 className="font-golos font-semibold text-xl sm:text-2xl text-gray-900 leading-tight">
           {title}
         </h2>
         {subtitle && (
@@ -47,9 +47,9 @@ export function NumberBadge({
   desc: PersonDescription | undefined;
 }) {
   return (
-    <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-4 flex flex-col gap-1 text-center">
-      <div className="text-3xl font-serif font-bold text-amber-700">{num}</div>
-      <div className="text-[11px] font-semibold text-amber-600 uppercase tracking-widest">
+    <div className="bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl p-4 flex flex-col gap-1 text-center">
+      <div className="text-3xl font-golos font-bold text-[#6C5BA7]">{num}</div>
+      <div className="text-[11px] font-semibold text-[#6C5BA7]/70 uppercase tracking-widest">
         {label}
       </div>
       {desc && (

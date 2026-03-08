@@ -38,7 +38,7 @@ export function SectionHeading({
         <Icon name={icon} size={20} className={iconColor} />
       </div>
       <div>
-        <h2 className="font-serif text-xl sm:text-2xl text-gray-900 leading-tight">
+        <h2 className="font-golos font-semibold text-xl sm:text-2xl text-gray-900 leading-tight">
           {title}
         </h2>
         {subtitle && (
@@ -59,9 +59,9 @@ export function NumberCard({
   desc?: PersonDescription | undefined;
 }) {
   return (
-    <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-4 flex flex-col gap-1 text-center">
-      <div className="text-3xl font-serif font-bold text-amber-700">{num}</div>
-      <div className="text-[11px] font-semibold text-amber-600 uppercase tracking-widest">
+    <div className="bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl p-4 flex flex-col gap-1 text-center">
+      <div className="text-3xl font-golos font-bold text-[#6C5BA7]">{num}</div>
+      <div className="text-[11px] font-semibold text-[#6C5BA7]/70 uppercase tracking-widest">
         {label}
       </div>
       {desc && (
@@ -82,7 +82,7 @@ export function ProgressBar({
 }) {
   const colorMap: Record<string, string> = {
     purple: "bg-purple-500",
-    amber: "bg-amber-500",
+    violet: "bg-[#6C5BA7]",
     emerald: "bg-emerald-500",
     sky: "bg-sky-500",
     rose: "bg-rose-500",
@@ -100,7 +100,7 @@ export function ProgressBar({
 
 export const TALENT_STYLES = [
   { bg: "bg-purple-50", border: "border-purple-100", text: "text-purple-700", icon: "text-purple-500" },
-  { bg: "bg-amber-50", border: "border-amber-100", text: "text-amber-700", icon: "text-amber-500" },
+  { bg: "bg-[#F4F2FA]", border: "border-[#E8E4F5]", text: "text-[#4A3D7A]", icon: "text-[#6C5BA7]" },
   { bg: "bg-emerald-50", border: "border-emerald-100", text: "text-emerald-700", icon: "text-emerald-500" },
   { bg: "bg-sky-50", border: "border-sky-100", text: "text-sky-700", icon: "text-sky-500" },
   { bg: "bg-rose-50", border: "border-rose-100", text: "text-rose-700", icon: "text-rose-500" },

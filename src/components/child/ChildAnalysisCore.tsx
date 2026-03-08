@@ -11,9 +11,9 @@ export default function ChildAnalysisCore({ profile }: { profile: ChildProfile }
         <SectionHeading
           icon="Hash"
           title="Все числа профиля"
-          subtitle="6 ключевых нумерологических показателей"
-          iconBg="bg-amber-100"
-          iconColor="text-amber-600"
+          subtitle="6 ключевых психологических показателей"
+          iconBg="bg-[#F4F2FA]"
+          iconColor="text-[#6C5BA7]"
         />
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <NumberCard num={profile.lifePath} label="Жизненный путь" desc={DESCRIPTIONS[profile.lifePath]} />
@@ -28,8 +28,8 @@ export default function ChildAnalysisCore({ profile }: { profile: ChildProfile }
       <Card className="p-6 sm:p-8">
         <SectionHeading
           icon="Grid3x3"
-          title="Матрица Пифагора"
-          subtitle="Распределение энергий по 9 аспектам"
+          title="Психологический портрет"
+          subtitle="Распределение качеств по 9 аспектам"
         />
         <div className="grid grid-cols-3 gap-2 sm:gap-3 max-w-md mx-auto">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((d) => {
@@ -48,7 +48,7 @@ export default function ChildAnalysisCore({ profile }: { profile: ChildProfile }
                   {MATRIX_LABELS[d]}
                 </div>
                 <div
-                  className={`text-xl sm:text-2xl font-serif font-bold ${
+                  className={`text-xl sm:text-2xl font-golos font-bold ${
                     filled ? "text-purple-700" : "text-gray-300"
                   }`}
                 >
@@ -70,7 +70,7 @@ export default function ChildAnalysisCore({ profile }: { profile: ChildProfile }
         />
         <div className="space-y-4">
           {[
-            { label: "Энергия", value: profile.energyIndex, color: "amber", icon: "Zap" },
+            { label: "Энергия", value: profile.energyIndex, color: "violet", icon: "Zap" },
             { label: "Интеллект", value: profile.mindIndex, color: "sky", icon: "Brain" },
             { label: "Эмоции", value: profile.emotionIndex, color: "rose", icon: "Heart" },
             { label: "Лидерство", value: profile.leaderIndex, color: "purple", icon: "Crown" },

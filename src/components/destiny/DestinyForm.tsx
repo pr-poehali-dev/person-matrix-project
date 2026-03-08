@@ -39,7 +39,7 @@ export default function DestinyForm({
               type="date"
               value={birthDate}
               onChange={(e) => onBirthDateChange(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-colors"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#6C5BA7]/30 focus:border-[#6C5BA7]/50 transition-colors"
             />
           </div>
         </div>
@@ -47,7 +47,7 @@ export default function DestinyForm({
         <button
           type="button"
           onClick={() => setExtraOpen(!extraOpen)}
-          className="flex items-center gap-2 text-sm text-amber-600 hover:text-amber-700 font-medium transition-colors"
+          className="flex items-center gap-2 text-sm text-[#6C5BA7] hover:text-[#5A4B95] font-medium transition-colors"
         >
           <Icon name={extraOpen ? "ChevronUp" : "ChevronDown"} size={16} />
           Дополнительно
@@ -69,7 +69,7 @@ export default function DestinyForm({
                   type="time"
                   value={birthTime}
                   onChange={(e) => onBirthTimeChange(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#6C5BA7]/30 focus:border-[#6C5BA7]/50 transition-colors"
                 />
               </div>
             </div>
@@ -88,7 +88,7 @@ export default function DestinyForm({
                   value={birthCity}
                   onChange={(e) => onBirthCityChange(e.target.value)}
                   placeholder="Например, Москва"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-[#6C5BA7]/30 focus:border-[#6C5BA7]/50 transition-colors"
                 />
               </div>
             </div>
@@ -105,11 +105,10 @@ export default function DestinyForm({
 
       <button
         onClick={onCalculate}
-        className="mt-6 w-full inline-flex items-center justify-center gap-2 text-white text-sm font-semibold rounded-xl px-8 py-3.5 transition-all shadow-md shadow-amber-200/50 hover:shadow-lg hover:shadow-amber-300/50"
-        style={{ background: "linear-gradient(135deg, #92400e, #d97706, #f59e0b)" }}
+        className="mt-6 w-full inline-flex items-center justify-center gap-2 text-white text-sm font-semibold rounded-xl px-8 py-3.5 transition-all shadow-md shadow-[#6C5BA7]/20 hover:shadow-lg bg-[#6C5BA7] hover:bg-[#5A4B95]"
       >
         <Icon name="Sparkles" size={18} />
-        Рассчитать карту судьбы
+        Начать анализ
       </button>
     </div>
   );

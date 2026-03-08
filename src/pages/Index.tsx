@@ -1,94 +1,70 @@
-import { useState, useEffect, useRef } from "react";
-import { calcLifePath, calcCharacter, calcDestiny } from "@/lib/matrix";
-import { getToken, saveCalculation } from "@/lib/auth";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
-import CalcSection from "@/components/CalcSection";
-import ResultSection from "@/components/ResultSection";
-import InfoSections from "@/components/InfoSections";
 import Footer from "@/components/Footer";
-
-const FloatingNumbers = () => {
-  const nums = ["1", "3", "7", "11", "9", "4", "22", "6", "2", "8", "5"];
-  return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-      {nums.map((n, i) => (
-        <div
-          key={i}
-          className="absolute font-cormorant select-none"
-          style={{
-            left: `${(i * 9.3 + 3) % 95}%`,
-            top: `${(i * 13.7 + 10) % 85}%`,
-            fontSize: `${40 + (i % 4) * 20}px`,
-            color: "rgba(201,168,76,0.05)",
-            animation: `float ${4 + (i % 3)}s ease-in-out infinite`,
-            animationDelay: `${i * 0.7}s`,
-          }}
-        >
-          {n}
-        </div>
-      ))}
-    </div>
-  );
-};
+import Icon from "@/components/ui/icon";
 
 export default function Index() {
-  const [birthDate, setBirthDate] = useState("");
-  const [birthTime, setBirthTime] = useState("");
-  const [result, setResult] = useState<{ life: number; character: number; destiny: number } | null>(null);
-  const [calcVisible, setCalcVisible] = useState(false);
-  const calcRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setCalcVisible(true); },
-      { threshold: 0.1 }
-    );
-    if (calcRef.current) observer.observe(calcRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  const handleCalculate = () => {
-    const life = calcLifePath(birthDate);
-    const character = calcCharacter(birthDate);
-    const destiny = calcDestiny(birthDate);
-    if (life && character && destiny) {
-      setResult({ life, character, destiny });
-      setTimeout(() => {
-        document.getElementById("result-section")?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-      if (getToken()) {
-        saveCalculation(birthDate, life, character, destiny);
-      }
-    }
-  };
+  const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen relative" style={{ backgroundColor: "#080C1F" }}>
-      <FloatingNumbers />
-      <div className="grid-pattern fixed inset-0 pointer-events-none z-0" />
-
+    <div className="min-h-screen bg-white">
       <Navbar />
 
-      <main className="relative z-10 pt-20">
-        <HeroSection calcRef={calcRef} />
+      <main>
+        {/* Block 1 — Hero */}
+        <section className="gradient-soft py-24 sm:py-32">
+          <div className="max-w-2xl mx-auto px-5 text-center">
+            <h1 className="font-golos text-4xl sm:text-5xl font-bold text-[#4A3D7A] tracking-tight opacity-0 animate-fade-up">
+              Матрица личности
+            </h1>
+            <p className="mt-5 font-golos text-base sm:text-lg text-gray-500 leading-relaxed opacity-0 animate-fade-up delay-200">
+              Платформа для анализа личности, семьи и жизненного потенциала
+            </p>
+          </div>
+        </section>
 
-        <CalcSection
-          calcRef={calcRef}
-          calcVisible={calcVisible}
-          birthDate={birthDate}
-          birthTime={birthTime}
-          onBirthDateChange={setBirthDate}
-          onBirthTimeChange={setBirthTime}
-          onCalculate={handleCalculate}
-        />
+        {/* Block 2 — Main free test card */}
+        <section className="py-16 sm:py-20 px-5">
+          <div className="max-w-lg mx-auto">
+            <div className="bg-white rounded-2xl soft-shadow p-8 sm:p-10 text-center transition-shadow duration-300 hover:soft-shadow-hover">
+              <div className="w-14 h-14 rounded-xl bg-[#6C5BA7]/10 flex items-center justify-center mx-auto mb-6">
+                <Icon name="Sparkles" size={28} className="text-[#6C5BA7]" />
+              </div>
+              <h2 className="font-golos text-xl sm:text-2xl font-semibold text-[#4A3D7A]">
+                Тест: Тип вашей личности
+              </h2>
+              <p className="mt-3 font-golos text-sm sm:text-base text-gray-400 leading-relaxed">
+                Определите свой психологический тип и сильные стороны характера
+              </p>
+              <button
+                onClick={() => navigate("/test/personality")}
+                className="mt-8 inline-flex items-center gap-2 gradient-primary text-white font-golos text-sm font-medium px-7 py-3 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
+              >
+                Пройти тест
+                <Icon name="ArrowRight" size={16} />
+              </button>
+            </div>
+          </div>
+        </section>
 
-        {result && <ResultSection result={result} birthDate={birthDate} />}
-
-        <InfoSections calcRef={calcRef} />
-
-        <Footer />
+        {/* Block 3 — CTA to catalog */}
+        <section className="pb-20 sm:pb-24 px-5">
+          <div className="max-w-md mx-auto text-center">
+            <p className="font-golos text-base text-gray-500">
+              Хотите узнать больше о себе?
+            </p>
+            <button
+              onClick={() => navigate("/catalog")}
+              className="mt-5 inline-flex items-center gap-2 font-golos text-sm font-medium text-[#6C5BA7] bg-[#6C5BA7]/8 hover:bg-[#6C5BA7]/15 border border-[#6C5BA7]/15 px-6 py-2.5 rounded-xl transition-all duration-200 active:scale-[0.97]"
+            >
+              Посмотреть все тесты и инструменты
+              <Icon name="ChevronRight" size={16} />
+            </button>
+          </div>
+        </section>
       </main>
+
+      <Footer />
     </div>
   );
 }

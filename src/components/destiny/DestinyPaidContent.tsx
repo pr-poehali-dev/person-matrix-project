@@ -69,16 +69,15 @@ export default function DestinyPaidContent({
           <DestinyFullReport profile={profile} />
 
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 text-center">
-            <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mx-auto mb-3">
-              <Icon name="Download" size={22} className="text-amber-600" />
+            <div className="w-12 h-12 rounded-xl bg-[#F4F2FA] flex items-center justify-center mx-auto mb-3">
+              <Icon name="Download" size={22} className="text-[#6C5BA7]" />
             </div>
-            <h3 className="font-serif text-lg text-gray-900 mb-1">Скачать PDF-отчёт</h3>
-            <p className="text-sm text-gray-400 mb-4">Полная карта судьбы в формате PDF (25–40 страниц)</p>
+            <h3 className="font-golos text-lg font-semibold text-gray-900 mb-1">Скачать PDF-отчёт</h3>
+            <p className="text-sm text-gray-400 mb-4">Полный анализ предназначения в формате PDF (25–40 страниц)</p>
             <button
               onClick={onDownloadPdf}
               disabled={pdfLoading}
-              className="inline-flex items-center gap-2 text-white text-sm font-semibold rounded-xl px-6 py-3 transition-all disabled:opacity-60"
-              style={{ background: "linear-gradient(135deg, #92400e, #d97706, #f59e0b)" }}
+              className="inline-flex items-center gap-2 text-white text-sm font-semibold rounded-xl px-6 py-3 transition-all disabled:opacity-60 bg-[#6C5BA7] hover:bg-[#5A4B95]"
             >
               <Icon name="Download" size={16} />
               {pdfLoading ? "Генерация PDF..." : "Скачать PDF-отчёт"}
@@ -87,25 +86,22 @@ export default function DestinyPaidContent({
         </>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
-          <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
-            <Icon name="Lock" size={24} className="text-amber-600" />
+          <div className="w-16 h-16 rounded-full bg-[#F4F2FA] flex items-center justify-center mx-auto mb-4">
+            <Icon name="Lock" size={24} className="text-[#6C5BA7]" />
           </div>
-          <h3 className="font-serif text-2xl text-gray-900 mb-2">Полная карта судьбы</h3>
+          <h3 className="font-golos text-2xl font-semibold text-gray-900 mb-2">Полный анализ предназначения</h3>
           <p className="text-sm text-gray-500 mb-2 max-w-md mx-auto">
-            20 разделов глубокого анализа: матрица, архетип, индексы, карьера,
-            предназначение, отношения, совместимость, жизненные циклы, кармические
-            уроки, риски, стратегия жизни + PDF-отчёт на 25–40 страниц
+            20 разделов глубокого анализа: архетип, индексы, карьера,
+            предназначение, отношения, совместимость, жизненные циклы,
+            ключевые уроки, риски, стратегия жизни + PDF-отчёт на 25–40 страниц
           </p>
-          <div className="text-3xl font-serif font-bold text-amber-700 mb-4">{price} ₽</div>
+          <div className="text-3xl font-golos font-bold text-[#6C5BA7] mb-4">{price} ₽</div>
           {getToken() ? (
             <div>
               <button
                 onClick={onBuy}
                 disabled={spending}
-                className="px-8 py-3 rounded-xl text-sm font-semibold text-white transition-all"
-                style={{
-                  background: spending ? "#d1d5db" : "linear-gradient(135deg, #92400e, #d97706, #f59e0b)",
-                }}
+                className={`px-8 py-3 rounded-xl text-sm font-semibold text-white transition-all ${spending ? "bg-gray-300" : "bg-[#6C5BA7] hover:bg-[#5A4B95]"}`}
               >
                 {spending
                   ? "Оплата..."
@@ -122,8 +118,7 @@ export default function DestinyPaidContent({
           ) : (
             <button
               onClick={onNavigateAuth}
-              className="px-8 py-3 rounded-xl text-sm font-semibold text-white"
-              style={{ background: "linear-gradient(135deg, #92400e, #d97706, #f59e0b)" }}
+              className="px-8 py-3 rounded-xl text-sm font-semibold text-white bg-[#6C5BA7] hover:bg-[#5A4B95]"
             >
               Войти для покупки
             </button>
@@ -133,23 +128,22 @@ export default function DestinyPaidContent({
 
       <div className="text-center pt-4 pb-8 space-y-4">
         <p className="text-sm text-gray-400">
-          Расчёт выполнен на основе классической нумерологии Пифагора
+          Результаты основаны на психологическом анализе личности
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             onClick={onReset}
-            className="inline-flex items-center gap-2 text-white text-sm font-medium rounded-xl px-6 py-3 transition-colors"
-            style={{ background: "linear-gradient(135deg, #92400e, #d97706)" }}
+            className="inline-flex items-center gap-2 text-white text-sm font-medium rounded-xl px-6 py-3 transition-colors bg-[#6C5BA7] hover:bg-[#5A4B95]"
           >
             <Icon name="RotateCcw" size={16} />
-            Рассчитать для другой даты
+            Новый анализ
           </button>
           <Link
-            to="/"
+            to="/catalog"
             className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors"
           >
             <Icon name="ArrowLeft" size={16} />
-            На главную
+            Все тесты и инструменты
           </Link>
         </div>
       </div>

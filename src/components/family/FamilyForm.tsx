@@ -150,7 +150,7 @@ export default function FamilyForm({
         className="mt-6 w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl px-8 py-3.5 transition-all shadow-md shadow-emerald-200/50 hover:shadow-lg hover:shadow-emerald-300/50"
       >
         <Icon name="Sparkles" size={18} />
-        Рассчитать матрицу семьи
+        Начать анализ
       </button>
     </Card>
   );

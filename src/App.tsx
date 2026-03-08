@@ -14,6 +14,7 @@ import Balance from "./pages/Balance";
 import Admin from "./pages/Admin";
 import FamilyMatrix from "./pages/FamilyMatrix";
 import DestinyMap from "./pages/DestinyMap";
+import Catalog from "./pages/Catalog";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/admin" element={<Admin />} />
           <Route path="/family" element={<FamilyMatrix />} />
           <Route path="/destiny" element={<DestinyMap />} />
+          <Route path="/catalog" element={<Catalog />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

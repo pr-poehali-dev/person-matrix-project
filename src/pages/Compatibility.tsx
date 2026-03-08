@@ -30,7 +30,7 @@ function ScoreCircle({ score, size = 80 }: { score: number; size?: number }) {
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="font-serif font-bold text-gray-900" style={{ fontSize: size * 0.28 }}>
+        <span className="font-golos font-bold text-gray-900" style={{ fontSize: size * 0.28 }}>
           {score}%
         </span>
       </div>
@@ -49,11 +49,11 @@ function Card({ children, className = "" }: { children: React.ReactNode; classNa
 function SectionHeading({ icon, title, subtitle }: { icon: string; title: string; subtitle?: string }) {
   return (
     <div className="flex items-start gap-3 mb-5">
-      <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
-        <Icon name={icon} size={20} className="text-amber-600" />
+      <div className="w-10 h-10 rounded-xl bg-[#F4F2FA] flex items-center justify-center shrink-0 mt-0.5">
+        <Icon name={icon} size={20} className="text-[#6C5BA7]" />
       </div>
       <div>
-        <h2 className="font-serif text-xl sm:text-2xl text-gray-900 leading-tight">{title}</h2>
+        <h2 className="font-golos font-semibold text-xl sm:text-2xl text-gray-900 leading-tight">{title}</h2>
         {subtitle && <p className="text-sm text-gray-400 mt-0.5">{subtitle}</p>}
       </div>
     </div>
@@ -95,10 +95,10 @@ function MatrixGrid({ matrix }: { matrix: PythagorasMatrix }) {
       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((digit) => (
         <div
           key={digit}
-          className="aspect-square rounded-lg bg-amber-50 border border-amber-100 flex flex-col items-center justify-center"
+          className="aspect-square rounded-lg bg-[#F4F2FA] border border-[#E8E4F5] flex flex-col items-center justify-center"
         >
           <span className="text-[10px] text-gray-400">{digit}</span>
-          <span className="font-serif font-bold text-amber-700 text-lg leading-none">
+          <span className="font-golos font-bold text-[#6C5BA7] text-lg leading-none">
             {matrix[digit] || 0}
           </span>
         </div>
@@ -122,13 +122,13 @@ function PersonCard({
   ];
   return (
     <div className="flex-1 min-w-0">
-      <div className="text-xs font-semibold text-amber-600 uppercase tracking-widest mb-3 text-center">
+      <div className="text-xs font-semibold text-[#6C5BA7] uppercase tracking-widest mb-3 text-center">
         {label}
       </div>
       <div className="space-y-2">
         {rows.map((r) => (
-          <div key={r.name} className="bg-amber-50/60 border border-amber-100 rounded-xl p-3 text-center">
-            <div className="font-serif text-2xl font-bold text-amber-700">{r.value}</div>
+          <div key={r.name} className="bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl p-3 text-center">
+            <div className="font-golos font-bold text-2xl text-[#6C5BA7]">{r.value}</div>
             <div className="text-[11px] text-gray-500 mt-0.5">{r.name}</div>
             <div className="text-[11px] text-gray-400">{DESCRIPTIONS[r.value > 9 ? r.value : r.value]?.title}</div>
           </div>
@@ -136,7 +136,7 @@ function PersonCard({
       </div>
       <div className="mt-4">
         <div className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2 text-center">
-          Матрица Пифагора
+          Психологический портрет
         </div>
         <MatrixGrid matrix={person.matrix} />
       </div>
@@ -147,8 +147,8 @@ function PersonCard({
 function DimensionCard({ icon, label, score }: { icon: string; label: string; score: number }) {
   return (
     <Card className="p-4 flex flex-col items-center text-center gap-3">
-      <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
-        <Icon name={icon} size={18} className="text-amber-600" />
+      <div className="w-9 h-9 rounded-lg bg-[#F4F2FA] flex items-center justify-center">
+        <Icon name={icon} size={18} className="text-[#6C5BA7]" />
       </div>
       <ScoreCircle score={score} size={72} />
       <span className="text-sm font-medium text-gray-700 leading-tight">{label}</span>
@@ -173,13 +173,13 @@ export default function Compatibility() {
     setResult(null);
 
     if (!date1 || !date2) {
-      setError("Введите обе даты рождения");
+      setError("Введите данные обоих партнёров");
       return;
     }
 
     const r = calcFullCompatibility(date1, date2);
     if (!r) {
-      setError("Не удалось выполнить расчёт. Проверьте даты.");
+      setError("Не удалось выполнить анализ. Проверьте данные.");
       return;
     }
 
@@ -266,10 +266,10 @@ export default function Compatibility() {
       <header className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-30">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link to={getToken() ? "/cabinet" : "/"} className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full border border-amber-400 flex items-center justify-center">
-              <span className="font-serif text-sm font-bold text-amber-600">M</span>
+            <div className="w-7 h-7 rounded-lg bg-[#6C5BA7]/10 flex items-center justify-center">
+              <span className="font-golos text-sm font-bold text-[#6C5BA7]">М</span>
             </div>
-            <span className="font-serif text-lg text-gray-800">Матрица личности</span>
+            <span className="font-golos font-semibold text-lg text-[#4A3D7A] tracking-tight">Матрица личности</span>
           </Link>
           <Link
             to={getToken() ? "/cabinet" : "/"}
@@ -283,14 +283,14 @@ export default function Compatibility() {
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8 sm:py-12 space-y-8">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 mb-4">
-            <Icon name="Heart" size={28} className="text-amber-700" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-[#F4F2FA] to-[#E8E4F5] mb-4">
+            <Icon name="Heart" size={28} className="text-[#6C5BA7]" />
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl text-gray-900 mb-2">
-            Совместимость по дате рождения
+          <h1 className="font-golos font-semibold text-3xl sm:text-4xl text-gray-900 mb-2">
+            Анализ совместимости пары
           </h1>
           <p className="text-gray-400 text-sm max-w-md mx-auto">
-            Узнайте, насколько гармоничен ваш союз с точки зрения нумерологии
+            Узнайте, насколько гармоничен ваш союз и в чём ваша сила как пары
           </p>
         </div>
 
@@ -298,7 +298,7 @@ export default function Compatibility() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Дата рождения — Партнёр 1
+                Партнёр 1
               </label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -308,13 +308,13 @@ export default function Compatibility() {
                   type="date"
                   value={date1}
                   onChange={(e) => setDate1(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#6C5BA7]/30 focus:border-[#6C5BA7]/50 transition-colors"
                 />
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Дата рождения — Партнёр 2
+                Партнёр 2
               </label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -324,7 +324,7 @@ export default function Compatibility() {
                   type="date"
                   value={date2}
                   onChange={(e) => setDate2(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#6C5BA7]/30 focus:border-[#6C5BA7]/50 transition-colors"
                 />
               </div>
             </div>
@@ -339,10 +339,10 @@ export default function Compatibility() {
 
           <button
             onClick={handleCalculate}
-            className="mt-6 w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold text-sm hover:from-amber-600 hover:to-amber-700 transition-all shadow-md shadow-amber-200/50 flex items-center justify-center gap-2"
+            className="mt-6 w-full py-3.5 rounded-xl bg-[#6C5BA7] hover:bg-[#5A4B95] text-white font-semibold text-sm transition-all shadow-md shadow-[#6C5BA7]/20 flex items-center justify-center gap-2"
           >
             <Icon name="Sparkles" size={18} />
-            Рассчитать совместимость
+            Начать анализ
           </button>
         </Card>
 
@@ -352,10 +352,10 @@ export default function Compatibility() {
               <div className="flex flex-col items-center text-center">
                 <ScoreCircle score={result.overallIndex} size={120} />
                 <div className="mt-4">
-                  <h2 className="font-serif text-2xl sm:text-3xl text-gray-900">
+                  <h2 className="font-golos font-semibold text-2xl sm:text-3xl text-gray-900">
                     {result.unionType.name}
                   </h2>
-                  <div className="mt-1 inline-flex items-center gap-1.5 text-sm text-amber-600 font-medium">
+                  <div className="mt-1 inline-flex items-center gap-1.5 text-sm text-[#6C5BA7] font-medium">
                     <Icon name="Sparkle" size={14} />
                     {result.pairArchetype}
                   </div>
@@ -409,12 +409,12 @@ export default function Compatibility() {
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gray-100 mb-4">
                   <Icon name="Lock" size={28} className="text-gray-400" />
                 </div>
-                <h3 className="font-serif text-xl sm:text-2xl text-gray-900 mb-2">
+                <h3 className="font-golos font-semibold text-xl sm:text-2xl text-gray-900 mb-2">
                   Полный отчёт совместимости
                 </h3>
                 <p className="text-sm text-gray-500 max-w-md mx-auto mb-1">
-                  Откройте доступ к 8 показателям совместимости, анализу кармической связи,
-                  сравнению матриц Пифагора, рекомендациям и конфликтному индексу.
+                  Откройте доступ к 8 показателям совместимости, анализу глубинной связи,
+                  сравнению психологических портретов, рекомендациям и конфликтному индексу.
                 </p>
                 <p className="text-xs text-gray-400 mb-6">
                   Ваш баланс: {balance} руб.
@@ -423,7 +423,7 @@ export default function Compatibility() {
                   <button
                     onClick={handleBuy}
                     disabled={spending}
-                    className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold text-sm hover:from-amber-600 hover:to-amber-700 transition-all shadow-md shadow-amber-200/50 disabled:opacity-60"
+                    className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-[#6C5BA7] hover:bg-[#5A4B95] text-white font-semibold text-sm transition-all shadow-md shadow-[#6C5BA7]/20 disabled:opacity-60"
                   >
                     <Icon name="CreditCard" size={18} />
                     {spending ? "Оплата..." : `Открыть за ${PRODUCT_PRICES.compatibility} руб.`}
@@ -431,7 +431,7 @@ export default function Compatibility() {
                 ) : (
                   <button
                     onClick={() => navigate("/auth")}
-                    className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold text-sm hover:from-amber-600 hover:to-amber-700 transition-all shadow-md shadow-amber-200/50"
+                    className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-[#6C5BA7] hover:bg-[#5A4B95] text-white font-semibold text-sm transition-all shadow-md shadow-[#6C5BA7]/20"
                   >
                     <Icon name="LogIn" size={18} />
                     Войти для покупки
@@ -446,7 +446,7 @@ export default function Compatibility() {
                   <SectionHeading
                     icon="Users"
                     title="Числа партнёров"
-                    subtitle="Сравнение нумерологических профилей"
+                    subtitle="Сравнение психологических профилей"
                   />
                   <div className="flex flex-col sm:flex-row gap-6">
                     <PersonCard label="Партнёр 1" person={result.person1} />
@@ -493,17 +493,17 @@ export default function Compatibility() {
                 </Card>
 
                 {result.karmic.isKarmic && (
-                  <Card className="p-6 sm:p-8 border-amber-200 bg-amber-50/30">
+                  <Card className="p-6 sm:p-8 border-[#E8E4F5] bg-[#F4F2FA]/30">
                     <SectionHeading
                       icon="Infinity"
-                      title="Кармическая связь"
-                      subtitle="Обнаружены признаки глубинной связи"
+                      title="Глубинная связь"
+                      subtitle="Обнаружены признаки особой связи между партнёрами"
                     />
                     <div className="space-y-3">
                       {result.karmic.reasons.map((reason, i) => (
                         <div key={i} className="flex items-start gap-3">
-                          <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
-                            <Icon name="Star" size={12} className="text-amber-600" />
+                          <div className="w-6 h-6 rounded-full bg-[#F4F2FA] flex items-center justify-center shrink-0 mt-0.5">
+                            <Icon name="Star" size={12} className="text-[#6C5BA7]" />
                           </div>
                           <p className="text-sm text-gray-700">{reason}</p>
                         </div>
@@ -553,15 +553,15 @@ export default function Compatibility() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-3">
-                        <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
-                          <Icon name="MessageCircle" size={14} className="text-amber-500" />
+                        <div className="w-7 h-7 rounded-lg bg-[#F4F2FA] flex items-center justify-center">
+                          <Icon name="MessageCircle" size={14} className="text-[#6C5BA7]" />
                         </div>
                         <span className="text-sm font-semibold text-gray-700">Советы</span>
                       </div>
                       <ul className="space-y-2">
                         {result.recommendations.advice.map((a, i) => (
                           <li key={i} className="flex items-start gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0 mt-1.5" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#6C5BA7] shrink-0 mt-1.5" />
                             <span className="text-sm text-gray-600">{a}</span>
                           </li>
                         ))}

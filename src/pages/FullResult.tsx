@@ -73,18 +73,18 @@ export default function FullResult() {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
         <Card className="p-10 text-center max-w-md">
-          <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-5">
-            <Icon name="AlertTriangle" size={28} className="text-amber-600" />
+          <div className="w-14 h-14 rounded-full bg-[#F4F2FA] flex items-center justify-center mx-auto mb-5">
+            <Icon name="AlertTriangle" size={28} className="text-[#6C5BA7]" />
           </div>
-          <h1 className="font-serif text-2xl text-gray-900 mb-2">
-            Дата не указана
+          <h1 className="font-golos font-semibold text-2xl text-gray-900 mb-2">
+            Данные не указаны
           </h1>
           <p className="text-gray-400 text-sm mb-6">
-            Перейдите на главную страницу и введите дату рождения для расчёта.
+            Перейдите на главную страницу для прохождения анализа.
           </p>
           <Link
             to={getToken() ? "/cabinet" : "/"}
-            className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-xl px-6 py-3 transition-colors"
+            className="inline-flex items-center gap-2 bg-[#6C5BA7] hover:bg-[#5A4B95] text-white text-sm font-medium rounded-xl px-6 py-3 transition-colors"
           >
             <Icon name="ArrowLeft" size={16} />
             {getToken() ? "В кабинет" : "На главную"}
@@ -101,12 +101,12 @@ export default function FullResult() {
       <header className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-30">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link to={getToken() ? "/cabinet" : "/"} className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full border border-amber-400 flex items-center justify-center">
-              <span className="font-serif text-sm font-bold text-amber-600">
+            <div className="w-7 h-7 rounded-lg bg-[#6C5BA7]/10 flex items-center justify-center">
+              <span className="font-golos text-sm font-bold text-[#6C5BA7]">
                 М
               </span>
             </div>
-            <span className="font-serif text-lg text-gray-800">
+            <span className="font-golos font-semibold text-lg text-[#4A3D7A] tracking-tight">
               Матрица личности
             </span>
           </Link>

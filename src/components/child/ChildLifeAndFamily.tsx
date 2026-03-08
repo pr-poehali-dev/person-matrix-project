@@ -25,18 +25,17 @@ export default function ChildLifeAndFamily({
           icon="TrendingUp"
           title="Индексы потенциала"
           subtitle="Обучаемость, успешность и будущее"
-          iconBg="bg-amber-100"
-          iconColor="text-amber-600"
+          iconBg="bg-[#F4F2FA]"
+          iconColor="text-[#6C5BA7]"
         />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
             { label: "Обучаемость", value: profile.learningIndex, icon: "GraduationCap", color: "emerald" },
-            { label: "Успешность", value: profile.successIndex, icon: "Trophy", color: "amber" },
+            { label: "Успешность", value: profile.successIndex, icon: "Trophy", color: "purple" },
             { label: "Будущий потенциал", value: profile.futureIndex, icon: "Rocket", color: "purple" },
           ].map((idx) => {
             const colorMap: Record<string, { bg: string; text: string; bar: string }> = {
               emerald: { bg: "bg-emerald-100", text: "text-emerald-700", bar: "emerald" },
-              amber: { bg: "bg-amber-100", text: "text-amber-700", bar: "amber" },
               purple: { bg: "bg-purple-100", text: "text-purple-700", bar: "purple" },
             };
             const c = colorMap[idx.color] || colorMap.purple;
@@ -48,7 +47,7 @@ export default function ChildLifeAndFamily({
                 <div className={`w-10 h-10 rounded-xl ${c.bg} flex items-center justify-center mx-auto mb-2`}>
                   <Icon name={idx.icon} size={20} className={c.text} />
                 </div>
-                <div className="text-2xl font-serif font-bold text-gray-900 mb-1">
+                <div className="text-2xl font-golos font-bold text-gray-900 mb-1">
                   {idx.value}%
                 </div>
                 <div className="text-xs font-medium text-gray-500 mb-2">
@@ -76,7 +75,7 @@ export default function ChildLifeAndFamily({
               className="flex items-start gap-4 bg-gray-50/80 border border-gray-100 rounded-xl p-4"
             >
               <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center shrink-0">
-                <span className="text-lg font-serif font-bold text-sky-700">
+                <span className="text-lg font-golos font-bold text-sky-700">
                   {cycle.number}
                 </span>
               </div>
@@ -103,11 +102,11 @@ export default function ChildLifeAndFamily({
           icon="CalendarCheck"
           title="Переломный возраст"
           subtitle="Ключевой рубеж трансформации"
-          iconBg="bg-amber-100"
-          iconColor="text-amber-600"
+          iconBg="bg-[#F4F2FA]"
+          iconColor="text-[#6C5BA7]"
         />
-        <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-5 sm:p-6 text-center">
-          <div className="text-4xl font-serif font-bold text-amber-700 mb-2">
+        <div className="bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl p-5 sm:p-6 text-center">
+          <div className="text-4xl font-golos font-bold text-[#6C5BA7] mb-2">
             {profile.turningAge} лет
           </div>
           <p className="text-sm text-gray-600 max-w-md mx-auto">
@@ -125,7 +124,7 @@ export default function ChildLifeAndFamily({
             <SectionHeading
               icon="Users"
               title="Совместимость с родителями"
-              subtitle="Энергетическая связь в семье"
+              subtitle="Психологическая связь в семье"
               iconBg="bg-rose-100"
               iconColor="text-rose-600"
             />
@@ -134,7 +133,7 @@ export default function ChildLifeAndFamily({
                 <div className="text-xs font-semibold text-purple-500 uppercase tracking-wider mb-1">
                   Семейный баланс
                 </div>
-                <div className="text-3xl font-serif font-bold text-purple-700 mb-2">
+                <div className="text-3xl font-golos font-bold text-purple-700 mb-2">
                   {profile.parentCompat.familyBalance}%
                 </div>
                 <ProgressBar
@@ -286,7 +285,7 @@ export default function ChildLifeAndFamily({
       {desc && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <Card className="p-6">
-            <h3 className="font-serif text-lg text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="font-golos font-semibold text-lg text-gray-900 mb-4 flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
                 <Icon
                   name="ThumbsUp"
@@ -311,12 +310,12 @@ export default function ChildLifeAndFamily({
           </Card>
 
           <Card className="p-6">
-            <h3 className="font-serif text-lg text-gray-900 mb-4 flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+            <h3 className="font-golos font-semibold text-lg text-gray-900 mb-4 flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-[#F4F2FA] flex items-center justify-center">
                 <Icon
                   name="Sprout"
                   size={15}
-                  className="text-amber-600"
+                  className="text-[#6C5BA7]"
                 />
               </div>
               Над чем работать
@@ -327,7 +326,7 @@ export default function ChildLifeAndFamily({
                   <Icon
                     name="ArrowUpRight"
                     size={18}
-                    className="text-amber-500 shrink-0 mt-0.5"
+                    className="text-[#6C5BA7] shrink-0 mt-0.5"
                   />
                   <span className="text-sm text-gray-700">{c}</span>
                 </li>
@@ -341,7 +340,7 @@ export default function ChildLifeAndFamily({
         <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center mx-auto mb-3">
           <Icon name="Download" size={22} className="text-purple-600" />
         </div>
-        <h3 className="font-serif text-lg text-gray-900 mb-1">
+        <h3 className="font-golos font-semibold text-lg text-gray-900 mb-1">
           Скачать PDF-отчёт
         </h3>
         <p className="text-sm text-gray-400 mb-4">

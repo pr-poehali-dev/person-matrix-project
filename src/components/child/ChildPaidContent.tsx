@@ -95,17 +95,17 @@ export default function ChildPaidContent({
         </>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
-          <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
-            <Icon name="Lock" size={24} className="text-amber-600" />
+          <div className="w-16 h-16 rounded-full bg-[#F4F2FA] flex items-center justify-center mx-auto mb-4">
+            <Icon name="Lock" size={24} className="text-[#6C5BA7]" />
           </div>
-          <h3 className="font-serif text-2xl text-gray-900 mb-2">
+          <h3 className="font-golos font-semibold text-2xl text-gray-900 mb-2">
             Полный профиль ребёнка
           </h3>
           <p className="text-sm text-gray-500 mb-2 max-w-md mx-auto">
-            Матрица Пифагора, индексы развития, карьерные склонности, жизненные
+            Психологический портрет, индексы развития, карьерные склонности, жизненные
             циклы, совместимость с родителями и советы
           </p>
-          <div className="text-3xl font-serif font-bold text-amber-700 mb-4">
+          <div className="text-3xl font-golos font-bold text-[#6C5BA7] mb-4">
             {PRODUCT_PRICES.child_analysis} ₽
           </div>
           {getToken() ? (
@@ -117,7 +117,7 @@ export default function ChildPaidContent({
                 style={{
                   background: spending
                     ? "#d1d5db"
-                    : "linear-gradient(135deg, #92400e, #d97706, #f59e0b)",
+                    : "linear-gradient(135deg, #6C5BA7, #8B7EC8)",
                 }}
               >
                 {spending
@@ -139,7 +139,7 @@ export default function ChildPaidContent({
               className="px-8 py-3 rounded-xl text-sm font-semibold text-white"
               style={{
                 background:
-                  "linear-gradient(135deg, #92400e, #d97706, #f59e0b)",
+                  "linear-gradient(135deg, #6C5BA7, #8B7EC8)",
               }}
             >
               Войти для покупки
@@ -150,7 +150,7 @@ export default function ChildPaidContent({
 
       <div className="text-center pt-4 pb-8 space-y-4">
         <p className="text-sm text-gray-400">
-          Расчёт выполнен на основе классической нумерологии Пифагора
+          Результаты основаны на психологическом анализе личности
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
@@ -158,7 +158,7 @@ export default function ChildPaidContent({
             className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-xl px-6 py-3 transition-colors"
           >
             <Icon name="RotateCcw" size={16} />
-            Рассчитать для другого ребёнка
+            Анализ другого ребёнка
           </button>
           <Link
             to="/"

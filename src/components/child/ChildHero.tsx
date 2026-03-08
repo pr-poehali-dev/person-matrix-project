@@ -27,20 +27,20 @@ export default function ChildHero({ profile, name }: ChildHeroProps) {
     <>
       <Card className="relative overflow-hidden p-8 sm:p-10">
         <div className="absolute -top-16 -right-16 w-48 h-48 bg-purple-50 rounded-full opacity-60 pointer-events-none" />
-        <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-amber-50 rounded-full opacity-50 pointer-events-none" />
+        <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-[#F4F2FA] rounded-full opacity-50 pointer-events-none" />
 
         <div className="relative flex flex-col sm:flex-row sm:items-center gap-6">
           <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center shrink-0 mx-auto sm:mx-0">
-            <span className="font-serif text-5xl sm:text-6xl font-bold text-purple-700">
+            <span className="font-golos text-5xl sm:text-6xl font-bold text-purple-700">
               {profile.lifePath}
             </span>
           </div>
 
           <div className="text-center sm:text-left">
             <p className="text-xs font-semibold text-purple-600 uppercase tracking-widest mb-1">
-              Число жизненного пути
+              Ключевой тип личности
             </p>
-            <h2 className="font-serif text-3xl sm:text-4xl text-gray-900 mb-1">
+            <h2 className="font-golos font-semibold text-3xl sm:text-4xl text-gray-900 mb-1">
               {`Профиль ${displayName}`}
             </h2>
             {desc && (
@@ -56,9 +56,9 @@ export default function ChildHero({ profile, name }: ChildHeroProps) {
         <SectionHeading
           icon="Hash"
           title="Ключевые числа"
-          subtitle="Нумерологический портрет ребёнка"
-          iconBg="bg-amber-100"
-          iconColor="text-amber-600"
+          subtitle="Психологический портрет ребёнка"
+          iconBg="bg-[#F4F2FA]"
+          iconColor="text-[#6C5BA7]"
         />
         <div className="grid grid-cols-3 gap-3">
           <NumberCard
@@ -97,9 +97,9 @@ export default function ChildHero({ profile, name }: ChildHeroProps) {
           <SectionHeading
             icon="Zap"
             title="Сильнейшие качества"
-            subtitle="Цифры с наибольшим присутствием в матрице"
-            iconBg="bg-amber-100"
-            iconColor="text-amber-600"
+            subtitle="Наиболее выраженные качества"
+            iconBg="bg-[#F4F2FA]"
+            iconColor="text-[#6C5BA7]"
           />
           <div className="grid grid-cols-3 gap-3">
             {topQualities.map((q) => (
@@ -107,7 +107,7 @@ export default function ChildHero({ profile, name }: ChildHeroProps) {
                 key={q.digit}
                 className="bg-gradient-to-br from-purple-50 to-purple-100/60 border border-purple-100 rounded-xl p-4 text-center"
               >
-                <div className="text-2xl font-serif font-bold text-purple-700 mb-1">
+                <div className="text-2xl font-golos font-bold text-purple-700 mb-1">
                   {q.digit}
                 </div>
                 <div className="text-xs font-semibold text-purple-600 uppercase tracking-wider">
@@ -119,7 +119,7 @@ export default function ChildHero({ profile, name }: ChildHeroProps) {
                       key={i}
                       name="Star"
                       size={12}
-                      className="text-amber-400 fill-amber-400"
+                      className="text-[#6C5BA7] fill-[#6C5BA7]"
                     />
                   ))}
                 </div>
@@ -131,11 +131,11 @@ export default function ChildHero({ profile, name }: ChildHeroProps) {
 
       <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-6 sm:p-8 text-center text-white">
         <Icon name="Lock" size={28} className="mx-auto mb-3 opacity-80" />
-        <h3 className="font-serif text-xl sm:text-2xl mb-2">
+        <h3 className="font-golos font-semibold text-xl sm:text-2xl mb-2">
           Получите полный профиль ребёнка
         </h3>
         <p className="text-purple-100 text-sm max-w-md mx-auto">
-          Матрица Пифагора, индексы развития, карьерные склонности, риски,
+          Психологический портрет, индексы развития, карьерные склонности, риски,
           жизненные циклы, совместимость с родителями и рекомендации
         </p>
       </div>

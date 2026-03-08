@@ -75,19 +75,18 @@ export default function Balance() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-100 px-6 py-4">
+      <header className="bg-white border-b border-gray-200/80 px-6 py-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full border border-amber-400 flex items-center justify-center">
-              <span className="font-serif text-sm font-bold text-amber-600">М</span>
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-[#6C5BA7]/10 flex items-center justify-center">
+              <span className="font-golos text-sm font-bold text-[#6C5BA7]">М</span>
             </div>
-            <span className="font-serif text-lg text-gray-800">Матрица личности</span>
+            <span className="font-golos text-lg font-semibold text-[#4A3D7A] tracking-tight">Матрица личности</span>
           </Link>
           <div className="flex items-center gap-4">
             <Link
               to="/balance"
-              className="flex items-center gap-1.5 text-sm font-medium text-amber-700 bg-amber-50 border border-amber-100 rounded-full px-3 py-1"
+              className="flex items-center gap-1.5 text-sm font-medium text-[#6C5BA7] bg-[#F4F2FA] border border-[#E8E4F5] rounded-full px-3 py-1"
             >
               <Icon name="Wallet" size={14} />
               {balance} ₽
@@ -104,51 +103,45 @@ export default function Balance() {
       </header>
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-8">
-        {/* Page title */}
         <div className="mb-8">
-          <h1 className="font-serif text-3xl text-gray-900 mb-1">Баланс</h1>
+          <h1 className="font-golos text-3xl font-semibold text-gray-900 mb-1">Баланс</h1>
           <p className="text-gray-400 text-sm">Управление балансом и история операций</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left column: balance card + top-up */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Balance card */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
-                  <Icon name="Wallet" size={24} className="text-amber-600" />
+                <div className="w-12 h-12 rounded-full bg-[#F4F2FA] flex items-center justify-center">
+                  <Icon name="Wallet" size={24} className="text-[#6C5BA7]" />
                 </div>
                 <div>
                   <div className="text-xs text-gray-400 uppercase tracking-wide font-medium">
                     Текущий баланс
                   </div>
-                  <div className="font-serif text-3xl font-bold text-gray-900">
+                  <div className="font-golos text-3xl font-bold text-gray-900">
                     {balance} <span className="text-xl text-gray-400">₽</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Top-up section */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <h2 className="font-serif text-lg text-gray-900 mb-4">Пополнить баланс</h2>
+              <h2 className="font-golos text-lg font-semibold text-gray-900 mb-4">Пополнить баланс</h2>
 
-              {/* Preset amounts */}
               <div className="grid grid-cols-3 gap-2 mb-4">
                 {PRESET_AMOUNTS.map((amount) => (
                   <button
                     key={amount}
                     onClick={() => handleTopUp(amount)}
                     disabled={paying}
-                    className="py-3 px-2 rounded-xl border border-gray-100 bg-gray-50 text-sm font-medium text-gray-700 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="py-3 px-2 rounded-xl border border-gray-100 bg-gray-50 text-sm font-medium text-gray-700 hover:border-[#6C5BA7]/30 hover:bg-[#F4F2FA] hover:text-[#6C5BA7] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {amount} ₽
                   </button>
                 ))}
               </div>
 
-              {/* Custom amount */}
               <div className="flex gap-2">
                 <input
                   type="number"
@@ -156,34 +149,30 @@ export default function Balance() {
                   placeholder="Другая сумма"
                   value={customAmount}
                   onChange={(e) => setCustomAmount(e.target.value)}
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-300 focus:outline-none focus:border-amber-300 focus:ring-1 focus:ring-amber-200 transition-colors"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-300 focus:outline-none focus:border-[#6C5BA7]/50 focus:ring-1 focus:ring-[#6C5BA7]/10 transition-colors"
                 />
                 <button
                   onClick={handleCustomTopUp}
                   disabled={paying || !customAmount || parseInt(customAmount, 10) <= 0}
-                  className="px-4 py-2.5 rounded-xl text-sm font-medium text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{
-                    background: "linear-gradient(135deg, #92400e, #d97706, #f59e0b)",
-                  }}
+                  className="px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-[#6C5BA7] hover:bg-[#5A4B95] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Icon name="ArrowRight" size={16} />
                 </button>
               </div>
 
               {paying && (
-                <div className="mt-3 text-xs text-amber-600 text-center">
+                <div className="mt-3 text-xs text-[#6C5BA7] text-center">
                   Переход к оплате...
                 </div>
               )}
             </div>
           </div>
 
-          {/* Right column: transaction history */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
                 <h2 className="font-semibold text-gray-800 text-sm">История операций</h2>
-                <span className="text-xs bg-amber-100 text-amber-700 rounded-full px-2 py-0.5">
+                <span className="text-xs bg-[#F4F2FA] text-[#6C5BA7] rounded-full px-2 py-0.5">
                   {transactions.length}
                 </span>
               </div>
@@ -207,44 +196,37 @@ export default function Balance() {
                         key={idx}
                         className="px-5 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors"
                       >
-                        {/* Icon */}
                         <div
-                          className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            isTopup
-                              ? "bg-green-50 text-green-600"
-                              : "bg-amber-50 text-amber-600"
+                          className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                            isTopup ? "bg-emerald-100" : "bg-[#F4F2FA]"
                           }`}
                         >
                           <Icon
-                            name={isTopup ? "ArrowUp" : "ArrowDown"}
+                            name={isTopup ? "ArrowDownLeft" : "ArrowUpRight"}
                             size={16}
+                            className={isTopup ? "text-emerald-600" : "text-[#6C5BA7]"}
                           />
                         </div>
-
-                        {/* Description */}
                         <div className="flex-1 min-w-0">
                           <div className="text-sm text-gray-800 font-medium truncate">
-                            {tx.description || (isTopup ? "Пополнение" : "Списание")}
+                            {tx.description || (isTopup ? "Пополнение" : "Покупка")}
                           </div>
-                          <div className="text-xs text-gray-400 mt-0.5">
-                            {new Date(tx.created_at).toLocaleDateString("ru-RU", {
-                              day: "numeric",
-                              month: "long",
+                          <div className="text-xs text-gray-400">
+                            {new Date(tx.created_at).toLocaleString("ru-RU", {
+                              day: "2-digit",
+                              month: "short",
                               year: "numeric",
                               hour: "2-digit",
                               minute: "2-digit",
                             })}
                           </div>
                         </div>
-
-                        {/* Amount */}
                         <div
-                          className={`text-sm font-semibold flex-shrink-0 ${
-                            isTopup ? "text-green-600" : "text-amber-600"
+                          className={`text-sm font-semibold shrink-0 ${
+                            isTopup ? "text-emerald-600" : "text-gray-700"
                           }`}
                         >
-                          {isTopup ? "+" : "-"}
-                          {tx.amount} ₽
+                          {isTopup ? "+" : "−"}{Math.abs(tx.amount)} ₽
                         </div>
                       </div>
                     );

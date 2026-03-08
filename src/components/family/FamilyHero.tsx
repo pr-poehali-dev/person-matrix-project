@@ -21,7 +21,7 @@ export default function FamilyHero({ analysis }: FamilyHeroProps) {
     <>
       <Card className="relative overflow-hidden p-8 sm:p-10">
         <div className="absolute -top-16 -right-16 w-48 h-48 bg-emerald-50 rounded-full opacity-60 pointer-events-none" />
-        <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-amber-50 rounded-full opacity-50 pointer-events-none" />
+        <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-[#F4F2FA] rounded-full opacity-50 pointer-events-none" />
         <div className="absolute top-1/2 right-1/4 w-24 h-24 bg-emerald-100 rounded-full opacity-30 pointer-events-none" />
 
         <div className="relative flex flex-col sm:flex-row sm:items-center gap-6">
@@ -37,8 +37,8 @@ export default function FamilyHero({ analysis }: FamilyHeroProps) {
             <p className="text-xs font-semibold text-emerald-600 uppercase tracking-widest mb-1">
               {freeSummary.familyTypeName}
             </p>
-            <h2 className="font-serif text-3xl sm:text-4xl text-gray-900 mb-1">
-              Матрица вашей семьи
+            <h2 className="font-golos font-semibold text-3xl sm:text-4xl text-gray-900 mb-1">
+              Анализ вашей семьи
             </h2>
             <p className="text-gray-500 text-base leading-relaxed max-w-lg">
               {freeSummary.shortDescription}
@@ -103,8 +103,8 @@ export default function FamilyHero({ analysis }: FamilyHeroProps) {
           icon="Users"
           title="Члены семьи"
           subtitle="Обзор ролей и жизненных путей"
-          iconBg="bg-amber-100"
-          iconColor="text-amber-600"
+          iconBg="bg-[#F4F2FA]"
+          iconColor="text-[#6C5BA7]"
         />
         <div className="space-y-3">
           {allMembers.map((member, idx) => {
@@ -118,7 +118,7 @@ export default function FamilyHero({ analysis }: FamilyHeroProps) {
                 className="flex items-center gap-4 bg-gray-50 rounded-xl p-4"
               >
                 <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center shrink-0">
-                  <span className="font-serif text-lg font-bold text-emerald-700">
+                  <span className="font-golos text-lg font-bold text-emerald-700">
                     {member.lifePath}
                   </span>
                 </div>
@@ -149,7 +149,7 @@ export default function FamilyHero({ analysis }: FamilyHeroProps) {
 
       <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl p-6 sm:p-8 text-center text-white">
         <Icon name="Lock" size={28} className="mx-auto mb-3 opacity-80" />
-        <h3 className="font-serif text-xl sm:text-2xl mb-2">
+        <h3 className="font-golos font-semibold text-xl sm:text-2xl mb-2">
           Получите полный анализ семьи
         </h3>
         <p className="text-emerald-100 text-sm max-w-md mx-auto">

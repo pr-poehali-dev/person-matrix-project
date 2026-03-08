@@ -27,13 +27,13 @@ export default function DestinyMap() {
     setProfile(null);
 
     if (!birthDate) {
-      setError("Введите дату рождения");
+      setError("Введите ваши данные");
       return;
     }
 
     const result = calcDestinyMap(birthDate);
     if (!result) {
-      setError("Не удалось выполнить расчёт. Проверьте дату.");
+      setError("Не удалось выполнить анализ. Проверьте данные.");
       return;
     }
 
@@ -93,10 +93,10 @@ export default function DestinyMap() {
       <header className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-30">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link to={getToken() ? "/cabinet" : "/"} className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full border border-amber-400 flex items-center justify-center">
-              <span className="font-serif text-sm font-bold text-amber-600">М</span>
+            <div className="w-7 h-7 rounded-lg bg-[#6C5BA7]/10 flex items-center justify-center">
+              <span className="font-golos text-sm font-bold text-[#6C5BA7]">М</span>
             </div>
-            <span className="font-serif text-lg text-gray-800">Матрица личности</span>
+            <span className="font-golos font-semibold text-lg text-[#4A3D7A] tracking-tight">Матрица личности</span>
           </Link>
           <Link
             to={getToken() ? "/cabinet" : "/"}
@@ -110,11 +110,11 @@ export default function DestinyMap() {
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8 sm:py-12 space-y-8">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4" style={{ background: "linear-gradient(135deg, #fef3c7, #fde68a)" }}>
-            <Icon name="Map" size={28} className="text-amber-700" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-[#F4F2FA] to-[#E8E4F5] mb-4">
+            <Icon name="Map" size={28} className="text-[#6C5BA7]" />
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl text-gray-900 mb-2">
-            Полная карта судьбы
+          <h1 className="font-golos font-semibold text-3xl sm:text-4xl text-gray-900 mb-2">
+            Анализ предназначения
           </h1>
           <p className="text-gray-400 text-sm max-w-lg mx-auto">
             Самый глубокий анализ личности: 20 разделов, все индексы,

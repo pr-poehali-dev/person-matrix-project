@@ -20,7 +20,7 @@ function MemberIndices({ member }: { member: FamilyMember }) {
   return (
     <div className="space-y-3">
       {[
-        { label: "Лидерство", value: member.leaderIndex, icon: "Crown", color: "amber" },
+        { label: "Лидерство", value: member.leaderIndex, icon: "Crown", color: "violet" },
         { label: "Эмоции", value: member.emotionIndex, icon: "Heart", color: "rose" },
         { label: "Интеллект", value: member.mindIndex, icon: "Brain", color: "sky" },
         { label: "Энергия", value: member.energyIndex, icon: "Zap", color: "emerald" },
@@ -50,7 +50,7 @@ function MemberCard({ member }: { member: FamilyMember }) {
     <div className="bg-gray-50 border border-gray-100 rounded-xl p-5">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center shrink-0">
-          <span className="font-serif text-lg font-bold text-emerald-700">
+          <span className="font-golos text-lg font-bold text-emerald-700">
             {member.lifePath}
           </span>
         </div>
@@ -82,7 +82,7 @@ function MemberCard({ member }: { member: FamilyMember }) {
 
       <div className="grid grid-cols-4 gap-2 mt-4">
         <div className="bg-white border border-gray-100 rounded-lg p-2 text-center">
-          <div className="text-lg font-serif font-bold text-amber-700">
+          <div className="text-lg font-golos font-bold text-[#6C5BA7]">
             {member.lifePath}
           </div>
           <div className="text-[9px] text-gray-400 uppercase tracking-wider">
@@ -90,7 +90,7 @@ function MemberCard({ member }: { member: FamilyMember }) {
           </div>
         </div>
         <div className="bg-white border border-gray-100 rounded-lg p-2 text-center">
-          <div className="text-lg font-serif font-bold text-amber-700">
+          <div className="text-lg font-golos font-bold text-[#6C5BA7]">
             {member.character}
           </div>
           <div className="text-[9px] text-gray-400 uppercase tracking-wider">
@@ -98,7 +98,7 @@ function MemberCard({ member }: { member: FamilyMember }) {
           </div>
         </div>
         <div className="bg-white border border-gray-100 rounded-lg p-2 text-center">
-          <div className="text-lg font-serif font-bold text-amber-700">
+          <div className="text-lg font-golos font-bold text-[#6C5BA7]">
             {member.destiny}
           </div>
           <div className="text-[9px] text-gray-400 uppercase tracking-wider">
@@ -106,7 +106,7 @@ function MemberCard({ member }: { member: FamilyMember }) {
           </div>
         </div>
         <div className="bg-white border border-gray-100 rounded-lg p-2 text-center">
-          <div className="text-lg font-serif font-bold text-amber-700">
+          <div className="text-lg font-golos font-bold text-[#6C5BA7]">
             {member.soulUrge}
           </div>
           <div className="text-[9px] text-gray-400 uppercase tracking-wider">
@@ -122,8 +122,8 @@ function ChildInfluenceCard({ child, parent1Label, parent2Label }: { child: Chil
   return (
     <div className="bg-gray-50 border border-gray-100 rounded-xl p-5">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center shrink-0">
-          <span className="font-serif text-base font-bold text-amber-700">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#F4F2FA] to-[#E8E4F5] flex items-center justify-center shrink-0">
+          <span className="font-golos text-base font-bold text-[#6C5BA7]">
             {child.member.lifePath}
           </span>
         </div>
@@ -187,10 +187,10 @@ export default function FamilyPaidContent({
     return (
       <>
         <Card className="p-8 text-center">
-          <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
-            <Icon name="Lock" size={24} className="text-amber-600" />
+          <div className="w-16 h-16 rounded-full bg-[#F4F2FA] flex items-center justify-center mx-auto mb-4">
+            <Icon name="Lock" size={24} className="text-[#6C5BA7]" />
           </div>
-          <h3 className="font-serif text-2xl text-gray-900 mb-2">
+          <h3 className="font-golos font-semibold text-2xl text-gray-900 mb-2">
             Полный анализ семьи
           </h3>
           <p className="text-sm text-gray-500 mb-5 max-w-md mx-auto">
@@ -220,7 +220,7 @@ export default function FamilyPaidContent({
             </div>
           </div>
 
-          <div className="text-3xl font-serif font-bold text-amber-700 mb-4">
+          <div className="text-3xl font-golos font-bold text-[#6C5BA7] mb-4">
             {PRICE.toLocaleString("ru-RU")} ₽
           </div>
 
@@ -267,7 +267,7 @@ export default function FamilyPaidContent({
             className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors"
           >
             <Icon name="RotateCcw" size={16} />
-            Новый расчёт
+            Новый анализ
           </button>
         </div>
       </>
@@ -326,8 +326,8 @@ export default function FamilyPaidContent({
           icon="Users"
           title="Роли каждого члена семьи"
           subtitle="Индексы, числа и распределение ролей"
-          iconBg="bg-amber-100"
-          iconColor="text-amber-600"
+          iconBg="bg-[#F4F2FA]"
+          iconColor="text-[#6C5BA7]"
         />
         <div className="space-y-4">
           <MemberCard member={parent1} />
@@ -373,7 +373,7 @@ export default function FamilyPaidContent({
             <div className="flex items-center gap-2 mb-2">
               <Icon name="Sparkles" size={16} className="text-indigo-600" />
               <span className="text-sm font-semibold text-indigo-800">
-                Кармическая связь
+                Глубинная связь
               </span>
             </div>
             <ul className="space-y-1">
@@ -510,8 +510,8 @@ export default function FamilyPaidContent({
         </div>
 
         <div className="mt-5 grid grid-cols-3 gap-3">
-          <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-3 text-center">
-            <div className="text-2xl font-serif font-bold text-amber-700">
+          <div className="bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl p-3 text-center">
+            <div className="text-2xl font-golos font-bold text-[#6C5BA7]">
               {avgLeadership}%
             </div>
             <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">
@@ -519,7 +519,7 @@ export default function FamilyPaidContent({
             </div>
           </div>
           <div className="bg-rose-50/60 border border-rose-100 rounded-xl p-3 text-center">
-            <div className="text-2xl font-serif font-bold text-rose-700">
+            <div className="text-2xl font-golos font-bold text-rose-700">
               {avgEmotion}%
             </div>
             <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">
@@ -527,7 +527,7 @@ export default function FamilyPaidContent({
             </div>
           </div>
           <div className="bg-sky-50/60 border border-sky-100 rounded-xl p-3 text-center">
-            <div className="text-2xl font-serif font-bold text-sky-700">
+            <div className="text-2xl font-golos font-bold text-sky-700">
               {avgMind}%
             </div>
             <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">
@@ -542,11 +542,11 @@ export default function FamilyPaidContent({
           icon="AlertTriangle"
           title="Возможные конфликты"
           subtitle="Зоны напряжения и точки роста"
-          iconBg="bg-amber-100"
-          iconColor="text-amber-600"
+          iconBg="bg-[#F4F2FA]"
+          iconColor="text-[#6C5BA7]"
         />
 
-        <div className="flex items-center gap-4 mb-5 bg-amber-50/60 border border-amber-100 rounded-xl p-4">
+        <div className="flex items-center gap-4 mb-5 bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl p-4">
           <ScoreCircle score={conflictIndex} size={72} />
           <div>
             <div className="text-sm font-semibold text-gray-900">
@@ -565,8 +565,8 @@ export default function FamilyPaidContent({
         <div className="space-y-2.5">
           {challenges.map((item, i) => (
             <div key={i} className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
-                <Icon name="AlertTriangle" size={12} className="text-amber-600" />
+              <div className="w-6 h-6 rounded-full bg-[#F4F2FA] flex items-center justify-center shrink-0 mt-0.5">
+                <Icon name="AlertTriangle" size={12} className="text-[#6C5BA7]" />
               </div>
               <p className="text-sm text-gray-700 leading-relaxed">{item}</p>
             </div>
@@ -638,14 +638,14 @@ export default function FamilyPaidContent({
 
       <div className="text-center pt-4 pb-8 space-y-4">
         <p className="text-sm text-gray-400">
-          Расчёт выполнен на основе классической нумерологии Пифагора
+          Результаты основаны на психологическом анализе личности
         </p>
         <button
           onClick={onReset}
           className="inline-flex items-center gap-2 border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-xl px-6 py-3 transition-colors"
         >
           <Icon name="RotateCcw" size={16} />
-          Новый расчёт
+          Новый анализ
         </button>
       </div>
     </>

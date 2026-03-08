@@ -38,7 +38,7 @@ export function SectionHeading({
         <Icon name={icon} size={20} className={iconColor} />
       </div>
       <div>
-        <h2 className="font-serif text-xl sm:text-2xl text-gray-900 leading-tight">
+        <h2 className="font-golos font-semibold text-xl sm:text-2xl text-gray-900 leading-tight">
           {title}
         </h2>
         {subtitle && (
@@ -59,9 +59,9 @@ export function NumberCard({
   desc?: PersonDescription | undefined;
 }) {
   return (
-    <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-4 flex flex-col gap-1 text-center">
-      <div className="text-3xl font-serif font-bold text-amber-700">{num}</div>
-      <div className="text-[11px] font-semibold text-amber-600 uppercase tracking-widest">
+    <div className="bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl p-4 flex flex-col gap-1 text-center">
+      <div className="text-3xl font-golos font-bold text-[#6C5BA7]">{num}</div>
+      <div className="text-[11px] font-semibold text-[#6C5BA7]/70 uppercase tracking-widest">
         {label}
       </div>
       {desc && (
@@ -82,7 +82,7 @@ export function ProgressBar({
 }) {
   const colorMap: Record<string, string> = {
     emerald: "bg-emerald-500",
-    amber: "bg-amber-500",
+    violet: "bg-[#6C5BA7]",
     purple: "bg-purple-500",
     sky: "bg-sky-500",
     rose: "bg-rose-500",
@@ -141,7 +141,7 @@ export function ScoreCircle({
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
         <span
-          className="font-serif font-bold text-gray-900"
+          className="font-golos font-bold text-gray-900"
           style={{ fontSize: size * 0.28 }}
         >
           {score}%
@@ -199,7 +199,7 @@ export function StatCard({
         </div>
         <span className="text-sm text-gray-500">{label}</span>
       </div>
-      <div className="font-serif text-3xl text-gray-900 font-bold">
+      <div className="font-golos text-3xl text-gray-900 font-bold">
         {value}
         {suffix && (
           <span className="text-lg font-normal text-gray-400 ml-0.5">

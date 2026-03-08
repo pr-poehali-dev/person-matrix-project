@@ -42,19 +42,19 @@ type Segment = "personal" | "couple" | "child" | null;
 
 const TAB_CONFIG: Record<CalcTab, { label: string; icon: string }> = {
   all: { label: "Все", icon: "LayoutGrid" },
-  personal: { label: "Личные", icon: "User" },
-  destiny: { label: "Карта судьбы", icon: "Map" },
-  compatibility: { label: "Совместимость", icon: "Heart" },
-  child: { label: "Ребёнок", icon: "Baby" },
-  family: { label: "Матрица семьи", icon: "Users" },
+  personal: { label: "Персональные анализы", icon: "User" },
+  destiny: { label: "Анализ предназначения", icon: "Map" },
+  compatibility: { label: "Анализ отношений", icon: "Heart" },
+  child: { label: "Анализ ребёнка", icon: "Baby" },
+  family: { label: "Анализ семьи", icon: "Users" },
 };
 
 const TYPE_LABELS: Record<string, { label: string; icon: string; color: string; bg: string }> = {
-  personal: { label: "Личный", icon: "User", color: "text-amber-700", bg: "bg-amber-100" },
-  destiny: { label: "Карта судьбы", icon: "Map", color: "text-indigo-600", bg: "bg-indigo-100" },
-  compatibility: { label: "Совместимость", icon: "Heart", color: "text-rose-600", bg: "bg-rose-100" },
-  child: { label: "Ребёнок", icon: "Baby", color: "text-violet-600", bg: "bg-violet-100" },
-  family: { label: "Матрица семьи", icon: "Users", color: "text-emerald-600", bg: "bg-emerald-100" },
+  personal: { label: "Персональный", icon: "User", color: "text-[#6C5BA7]", bg: "bg-[#F4F2FA]" },
+  destiny: { label: "Предназначение", icon: "Map", color: "text-[#6C5BA7]", bg: "bg-[#F4F2FA]" },
+  compatibility: { label: "Отношения", icon: "Heart", color: "text-rose-500", bg: "bg-rose-50" },
+  child: { label: "Ребёнок", icon: "Baby", color: "text-[#6C5BA7]", bg: "bg-[#F4F2FA]" },
+  family: { label: "Семья", icon: "Users", color: "text-emerald-600", bg: "bg-emerald-50" },
 };
 
 function isPurchased(calc: Calculation, purchases: Purchase[]): boolean {
@@ -117,9 +117,9 @@ function formatDate(d: string): string {
 function NumBadge({ num, label }: { num: number; label: string }) {
   const desc = DESCRIPTIONS[num];
   return (
-    <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex flex-col gap-1">
-      <div className="text-2xl font-serif font-bold text-amber-700">{num}</div>
-      <div className="text-xs font-medium text-amber-600 uppercase tracking-wide">{label}</div>
+    <div className="bg-[#F4F2FA] border border-[#E8E4F5] rounded-xl p-4 flex flex-col gap-1">
+      <div className="text-2xl font-golos font-bold text-[#6C5BA7]">{num}</div>
+      <div className="text-xs font-medium text-[#6C5BA7]/70 uppercase tracking-wide">{label}</div>
       {desc && <div className="text-xs text-gray-500 mt-1">{desc.title}</div>}
     </div>
   );
@@ -138,7 +138,7 @@ function ScoreCircle({ score }: { score: number }) {
         <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={color} strokeWidth={3} strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset} />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="font-serif font-bold text-gray-900 text-sm">{score}%</span>
+        <span className="font-golos font-bold text-gray-900 text-sm">{score}%</span>
       </div>
     </div>
   );
@@ -190,24 +190,24 @@ export default function Cabinet() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-400 text-sm">Загрузка...</div>
+        <div className="text-gray-400 text-sm font-golos">Загрузка...</div>
       </div>
     );
   }
 
   const renderCalcTitle = (calc: Calculation) => {
     if (calc.calc_type === "compatibility" || calc.calc_type === "family") {
-      return `${calc.birth_date} + ${calc.birth_date2}`;
+      return `${formatDate(calc.birth_date)} + ${formatDate(calc.birth_date2 || "")}`;
     }
     if (calc.calc_type === "child" && calc.child_name) {
       return calc.child_name;
     }
-    return calc.birth_date;
+    return formatDate(calc.birth_date);
   };
 
   const renderCalcSubtitle = (calc: Calculation) => {
     if (calc.calc_type === "child" && calc.child_name) {
-      return calc.birth_date;
+      return formatDate(calc.birth_date);
     }
     return formatDate(calc.created_at);
   };
@@ -228,7 +228,7 @@ export default function Cabinet() {
     }
     if (calc.calc_type === "family") {
       return (
-        <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 text-xs flex items-center justify-center">
+        <span className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 text-xs flex items-center justify-center">
           <Icon name="Users" size={12} />
         </span>
       );
@@ -236,7 +236,7 @@ export default function Cabinet() {
     return (
       <div className="flex gap-1">
         {[calc.life_path, calc.character_num, calc.destiny].filter(Boolean).map((n, i) => (
-          <span key={i} className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 text-xs flex items-center justify-center font-bold">
+          <span key={i} className="w-6 h-6 rounded-full bg-[#F4F2FA] text-[#6C5BA7] text-xs flex items-center justify-center font-bold">
             {n}
           </span>
         ))}
@@ -259,8 +259,8 @@ export default function Cabinet() {
                   <Icon name={type.icon} size={16} className={type.color} />
                 </div>
                 <div>
-                  <h2 className="font-serif text-xl text-gray-900">Совместимость</h2>
-                  <p className="text-xs text-gray-400">{calc.birth_date} и {calc.birth_date2}</p>
+                  <h2 className="font-golos font-semibold text-xl text-gray-900">Анализ отношений</h2>
+                  <p className="text-xs text-gray-400">{formatDate(calc.birth_date)} и {formatDate(calc.birth_date2 || "")}</p>
                 </div>
               </div>
               <span className="text-xs text-gray-400">{formatDate(calc.created_at)}</span>
@@ -287,7 +287,7 @@ export default function Cabinet() {
               <Link to={link}
                 className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors border-2 border-rose-200 text-rose-600 hover:bg-rose-50">
                 <Icon name="Lock" size={14} />
-                Получить полный расчёт
+                Получить полный отчёт
               </Link>
             )}
           </div>
@@ -312,8 +312,8 @@ export default function Cabinet() {
                   <Icon name={type.icon} size={16} className={type.color} />
                 </div>
                 <div>
-                  <h2 className="font-serif text-xl text-gray-900">Матрица семьи</h2>
-                  <p className="text-xs text-gray-400">{calc.birth_date} и {calc.birth_date2}</p>
+                  <h2 className="font-golos font-semibold text-xl text-gray-900">Анализ семьи</h2>
+                  <p className="text-xs text-gray-400">{formatDate(calc.birth_date)} и {formatDate(calc.birth_date2 || "")}</p>
                 </div>
               </div>
               <span className="text-xs text-gray-400">{formatDate(calc.created_at)}</span>
@@ -330,7 +330,7 @@ export default function Cabinet() {
               <Link to={link}
                 className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors border-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50">
                 <Icon name="Lock" size={14} />
-                Получить полный расчёт
+                Получить полный отчёт
               </Link>
             )}
           </div>
@@ -355,10 +355,10 @@ export default function Cabinet() {
                   <Icon name={type.icon} size={16} className={type.color} />
                 </div>
                 <div>
-                  <h2 className="font-serif text-xl text-gray-900">
-                    {calc.child_name ? `Профиль: ${calc.child_name}` : "Профиль ребёнка"}
+                  <h2 className="font-golos font-semibold text-xl text-gray-900">
+                    {calc.child_name ? `Анализ: ${calc.child_name}` : "Анализ личности ребёнка"}
                   </h2>
-                  <p className="text-xs text-gray-400">{calc.birth_date}</p>
+                  <p className="text-xs text-gray-400">{formatDate(calc.birth_date)}</p>
                 </div>
               </div>
               <span className="text-xs text-gray-400">{formatDate(calc.created_at)}</span>
@@ -377,16 +377,15 @@ export default function Cabinet() {
 
             {paid ? (
               <Link to={link}
-                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors text-white"
-                style={{ background: "linear-gradient(135deg, #7c3aed, #8b5cf6, #a78bfa)" }}>
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors text-white bg-[#6C5BA7] hover:bg-[#5A4B95]">
                 <Icon name="ArrowRight" size={14} />
                 Открыть полный анализ
               </Link>
             ) : (
               <Link to={link}
-                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors border-2 border-violet-200 text-violet-600 hover:bg-violet-50">
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors border-2 border-[#E8E4F5] text-[#6C5BA7] hover:bg-[#F4F2FA]">
                 <Icon name="Lock" size={14} />
-                Получить полный расчёт
+                Получить полный отчёт
               </Link>
             )}
           </div>
@@ -401,12 +400,12 @@ export default function Cabinet() {
           {DESCRIPTIONS[calc.life_path] && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center">
-                  <span className="font-serif text-lg font-bold text-violet-700">{calc.life_path}</span>
+                <div className="w-10 h-10 rounded-full bg-[#F4F2FA] flex items-center justify-center">
+                  <span className="font-golos text-lg font-bold text-[#6C5BA7]">{calc.life_path}</span>
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900">{DESCRIPTIONS[calc.life_path].title}</div>
-                  <div className="text-xs text-violet-600">{DESCRIPTIONS[calc.life_path].tagline}</div>
+                  <div className="font-golos font-semibold text-gray-900">{DESCRIPTIONS[calc.life_path].title}</div>
+                  <div className="text-xs text-[#6C5BA7]">{DESCRIPTIONS[calc.life_path].tagline}</div>
                 </div>
               </div>
               <p className="text-sm text-gray-600 leading-relaxed">{DESCRIPTIONS[calc.life_path].character}</p>
@@ -425,7 +424,8 @@ export default function Cabinet() {
                 <Icon name={type.icon} size={16} className={type.color} />
               </div>
               <div>
-                <h2 className="font-serif text-xl text-gray-900">Матрица для {calc.birth_date}</h2>
+                <h2 className="font-golos font-semibold text-xl text-gray-900">Персональный анализ</h2>
+                <p className="text-xs text-gray-400">{formatDate(calc.birth_date)}</p>
               </div>
             </div>
             <span className="text-xs text-gray-400">{formatDate(calc.created_at)}</span>
@@ -438,16 +438,15 @@ export default function Cabinet() {
 
           {paid ? (
             <Link to={link}
-              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors text-white"
-              style={{ background: "linear-gradient(135deg, #92400e, #d97706, #f59e0b)" }}>
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors text-white bg-[#6C5BA7] hover:bg-[#5A4B95]">
               <Icon name="ArrowRight" size={14} />
               Открыть полный анализ
             </Link>
           ) : (
             <Link to={link}
-              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors border-2 border-amber-200 text-amber-700 hover:bg-amber-50">
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors border-2 border-[#E8E4F5] text-[#6C5BA7] hover:bg-[#F4F2FA]">
               <Icon name="Lock" size={14} />
-              Получить полный расчёт
+              Получить полный отчёт
             </Link>
           )}
         </div>
@@ -462,12 +461,12 @@ export default function Cabinet() {
         {DESCRIPTIONS[calc.life_path] && (
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
-                <span className="font-serif text-lg font-bold text-amber-700">{calc.life_path}</span>
+              <div className="w-10 h-10 rounded-full bg-[#F4F2FA] flex items-center justify-center">
+                <span className="font-golos text-lg font-bold text-[#6C5BA7]">{calc.life_path}</span>
               </div>
               <div>
-                <div className="font-semibold text-gray-900">{DESCRIPTIONS[calc.life_path].title}</div>
-                <div className="text-xs text-amber-600">{DESCRIPTIONS[calc.life_path].tagline}</div>
+                <div className="font-golos font-semibold text-gray-900">{DESCRIPTIONS[calc.life_path].title}</div>
+                <div className="text-xs text-[#6C5BA7]">{DESCRIPTIONS[calc.life_path].tagline}</div>
               </div>
             </div>
             <p className="text-sm text-gray-600 leading-relaxed mb-4">
@@ -475,7 +474,7 @@ export default function Cabinet() {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Сильные стороны</div>
+                <div className="text-xs font-golos font-semibold text-gray-500 uppercase tracking-wide mb-2">Сильные стороны</div>
                 <ul className="space-y-1.5">
                   {DESCRIPTIONS[calc.life_path].strengths.map(s => (
                     <li key={s} className="flex items-start gap-2 text-sm text-gray-700">
@@ -486,11 +485,11 @@ export default function Cabinet() {
                 </ul>
               </div>
               <div>
-                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Сферы роста</div>
+                <div className="text-xs font-golos font-semibold text-gray-500 uppercase tracking-wide mb-2">Сферы роста</div>
                 <ul className="space-y-1.5">
                   {DESCRIPTIONS[calc.life_path].challenges.map(c => (
                     <li key={c} className="flex items-start gap-2 text-sm text-gray-700">
-                      <Icon name="ArrowUpRight" size={14} className="text-amber-500 mt-0.5 shrink-0" />
+                      <Icon name="ArrowUpRight" size={14} className="text-[#6C5BA7] mt-0.5 shrink-0" />
                       {c}
                     </li>
                   ))}
@@ -504,15 +503,15 @@ export default function Cabinet() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-center gap-2 mb-3">
-                <Icon name="Briefcase" size={16} className="text-amber-600" />
-                <span className="font-semibold text-gray-800 text-sm">Карьера</span>
+                <Icon name="Briefcase" size={16} className="text-[#6C5BA7]" />
+                <span className="font-golos font-semibold text-gray-800 text-sm">Карьера</span>
               </div>
               <p className="text-sm text-gray-600 leading-relaxed">{DESCRIPTIONS[calc.life_path].career}</p>
             </div>
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Icon name="Heart" size={16} className="text-rose-400" />
-                <span className="font-semibold text-gray-800 text-sm">Отношения</span>
+                <span className="font-golos font-semibold text-gray-800 text-sm">Отношения</span>
               </div>
               <p className="text-sm text-gray-600 leading-relaxed">{DESCRIPTIONS[calc.life_path].relationships}</p>
             </div>
@@ -524,23 +523,23 @@ export default function Cabinet() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white border-b border-gray-100 px-6 py-4">
+      <header className="bg-white border-b border-gray-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] px-5 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full border border-amber-400 flex items-center justify-center">
-              <span className="font-serif text-sm font-bold text-amber-600">М</span>
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-[#6C5BA7]/10 flex items-center justify-center">
+              <span className="font-golos text-sm font-bold text-[#6C5BA7]">М</span>
             </div>
-            <span className="font-serif text-lg text-gray-800">Матрица личности</span>
+            <span className="font-golos text-lg font-semibold text-[#4A3D7A] tracking-tight">Матрица личности</span>
           </Link>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500 hidden sm:block">{user?.email}</span>
-            <Link to="/balance" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-100 text-amber-700 text-sm font-medium hover:bg-amber-100 transition-colors">
+            <span className="text-sm text-gray-500 hidden sm:block font-golos">{user?.email}</span>
+            <Link to="/balance" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F4F2FA] border border-[#E8E4F5] text-[#6C5BA7] text-sm font-medium hover:bg-[#E8E4F5] transition-colors font-golos">
               <Icon name="Wallet" size={14} />
               {balance} ₽
             </Link>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors"
+              className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors font-golos"
             >
               <Icon name="LogOut" size={15} />
               Выйти
@@ -551,10 +550,10 @@ export default function Cabinet() {
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-8">
         <div className="mb-8">
-          <h1 className="font-serif text-3xl text-gray-900 mb-1">
-            Привет, {user?.name || "красавица"} 👋
+          <h1 className="font-golos font-semibold text-3xl text-gray-900 mb-1">
+            Привет, {user?.name || "друг"}
           </h1>
-          <p className="text-gray-400 text-sm">Здесь хранится ваша история расчётов</p>
+          <p className="text-gray-400 text-sm font-golos">Здесь хранятся ваши результаты</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -565,15 +564,15 @@ export default function Cabinet() {
                   <button
                     key={t}
                     onClick={() => { setTab(t); setActiveCalc(null); }}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-                      tab === t ? "bg-amber-100 text-amber-800" : "text-gray-500 hover:bg-gray-50"
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors font-golos ${
+                      tab === t ? "bg-[#F4F2FA] text-[#6C5BA7]" : "text-gray-500 hover:bg-gray-50"
                     }`}
                   >
                     <Icon name={TAB_CONFIG[t].icon} size={13} />
                     {TAB_CONFIG[t].label}
                     {counts[t] > 0 && (
                       <span className={`ml-0.5 text-[10px] rounded-full px-1.5 py-px ${
-                        tab === t ? "bg-amber-200 text-amber-800" : "bg-gray-100 text-gray-400"
+                        tab === t ? "bg-[#E8E4F5] text-[#6C5BA7]" : "bg-gray-100 text-gray-400"
                       }`}>{counts[t]}</span>
                     )}
                   </button>
@@ -582,12 +581,14 @@ export default function Cabinet() {
 
               {filtered.length === 0 ? (
                 <div className="px-5 py-10 text-center">
-                  <div className="text-3xl mb-3">🔮</div>
-                  <p className="text-gray-400 text-sm mb-4">
-                    {tab === "all" ? "Расчётов пока нет" : `Нет расчётов в категории «${TAB_CONFIG[tab].label}»`}
+                  <div className="w-12 h-12 rounded-xl bg-[#F4F2FA] flex items-center justify-center mx-auto mb-3">
+                    <Icon name="Inbox" size={22} className="text-[#6C5BA7]/50" />
+                  </div>
+                  <p className="text-gray-400 text-sm mb-4 font-golos">
+                    {tab === "all" ? "Результатов пока нет" : `Нет результатов в категории «${TAB_CONFIG[tab].label}»`}
                   </p>
-                  <Link to={tab === "compatibility" ? "/compatibility" : tab === "child" ? "/child" : tab === "family" ? "/family" : tab === "destiny" ? "/destiny" : "/"} className="text-sm text-amber-600 font-medium hover:underline">
-                    Сделать расчёт →
+                  <Link to={tab === "compatibility" ? "/compatibility" : tab === "child" ? "/child" : tab === "family" ? "/family" : tab === "destiny" ? "/destiny" : "/"} className="text-sm text-[#6C5BA7] font-medium hover:underline font-golos">
+                    Пройти анализ
                   </Link>
                 </div>
               ) : (
@@ -599,19 +600,20 @@ export default function Cabinet() {
                       <button
                         key={calc.id}
                         onClick={() => setActiveCalc(calc)}
-                        className="w-full px-4 py-3.5 flex items-center gap-3 text-left transition-colors hover:bg-amber-50"
-                        style={{ background: activeCalc?.id === calc.id ? "#fffbeb" : undefined }}
+                        className={`w-full px-4 py-3.5 flex items-center gap-3 text-left transition-colors hover:bg-[#F4F2FA]/50 ${
+                          activeCalc?.id === calc.id ? "bg-[#F4F2FA]/70" : ""
+                        }`}
                       >
                         <div className={`w-8 h-8 rounded-lg ${type.bg} flex items-center justify-center shrink-0`}>
                           <Icon name={type.icon} size={14} className={type.color} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-800 truncate">{renderCalcTitle(calc)}</span>
+                            <span className="text-sm font-medium text-gray-800 truncate font-golos">{renderCalcTitle(calc)}</span>
                             {paid && <Icon name="CheckCircle" size={12} className="text-green-500 shrink-0" />}
                             {!paid && <Icon name="Lock" size={11} className="text-gray-300 shrink-0" />}
                           </div>
-                          <div className="text-xs text-gray-400 mt-0.5">{renderCalcSubtitle(calc)}</div>
+                          <div className="text-xs text-gray-400 mt-0.5 font-golos">{renderCalcSubtitle(calc)}</div>
                         </div>
                         <div className="shrink-0">
                           {renderCalcBadges(calc)}
@@ -627,7 +629,7 @@ export default function Cabinet() {
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => setOpenSegment(openSegment === "personal" ? null : "personal")}
-                  className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 text-xs font-medium transition-colors ${openSegment === "personal" ? "border-amber-400 bg-amber-50 text-amber-700" : "border-dashed border-amber-200 text-amber-600 hover:bg-amber-50"}`}
+                  className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 text-xs font-medium transition-colors font-golos ${openSegment === "personal" ? "border-[#6C5BA7] bg-[#F4F2FA] text-[#6C5BA7]" : "border-dashed border-[#E8E4F5] text-[#6C5BA7]/70 hover:bg-[#F4F2FA]"}`}
                 >
                   <Icon name="User" size={16} />
                   Личный
@@ -635,7 +637,7 @@ export default function Cabinet() {
                 </button>
                 <button
                   onClick={() => setOpenSegment(openSegment === "couple" ? null : "couple")}
-                  className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 text-xs font-medium transition-colors ${openSegment === "couple" ? "border-rose-400 bg-rose-50 text-rose-600" : "border-dashed border-rose-200 text-rose-500 hover:bg-rose-50"}`}
+                  className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 text-xs font-medium transition-colors font-golos ${openSegment === "couple" ? "border-rose-400 bg-rose-50 text-rose-600" : "border-dashed border-rose-200 text-rose-500 hover:bg-rose-50"}`}
                 >
                   <Icon name="Heart" size={16} />
                   Семья
@@ -643,7 +645,7 @@ export default function Cabinet() {
                 </button>
                 <button
                   onClick={() => setOpenSegment(openSegment === "child" ? null : "child")}
-                  className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 text-xs font-medium transition-colors ${openSegment === "child" ? "border-violet-400 bg-violet-50 text-violet-600" : "border-dashed border-violet-200 text-violet-500 hover:bg-violet-50"}`}
+                  className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 text-xs font-medium transition-colors font-golos ${openSegment === "child" ? "border-[#6C5BA7] bg-[#F4F2FA] text-[#6C5BA7]" : "border-dashed border-[#E8E4F5] text-[#6C5BA7]/70 hover:bg-[#F4F2FA]"}`}
                 >
                   <Icon name="Baby" size={16} />
                   Ребёнок
@@ -652,26 +654,26 @@ export default function Cabinet() {
               </div>
 
               {openSegment === "personal" && (
-                <div className="bg-amber-50 rounded-xl p-3 space-y-2 border border-amber-200 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="bg-[#F4F2FA] rounded-xl p-3 space-y-2 border border-[#E8E4F5] animate-in fade-in slide-in-from-top-2 duration-200">
                   <Link to="/result" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
-                    <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
-                      <Icon name="Sparkles" size={14} className="text-amber-600" />
+                    <div className="w-8 h-8 rounded-lg bg-[#F4F2FA] flex items-center justify-center">
+                      <Icon name="Sparkles" size={14} className="text-[#6C5BA7]" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-800">Полный анализ личности</div>
-                      <div className="text-xs text-gray-400">Характер, судьба, таланты</div>
+                      <div className="text-sm font-medium text-gray-800 font-golos">Персональный анализ личности</div>
+                      <div className="text-xs text-gray-400 font-golos">Характер, судьба, таланты</div>
                     </div>
-                    <span className="text-xs font-bold text-amber-600">490 ₽</span>
+                    <span className="text-xs font-bold text-[#6C5BA7] font-golos">490 ₽</span>
                   </Link>
                   <Link to="/destiny" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
-                      <Icon name="Map" size={14} className="text-indigo-600" />
+                    <div className="w-8 h-8 rounded-lg bg-[#F4F2FA] flex items-center justify-center">
+                      <Icon name="Map" size={14} className="text-[#6C5BA7]" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-800">Полная карта судьбы</div>
-                      <div className="text-xs text-gray-400">Глубокий разбор всех аспектов</div>
+                      <div className="text-sm font-medium text-gray-800 font-golos">Анализ предназначения</div>
+                      <div className="text-xs text-gray-400 font-golos">Глубокий разбор всех аспектов</div>
                     </div>
-                    <span className="text-xs font-bold text-indigo-600">1 490 ₽</span>
+                    <span className="text-xs font-bold text-[#6C5BA7] font-golos">1 490 ₽</span>
                   </Link>
                 </div>
               )}
@@ -679,49 +681,49 @@ export default function Cabinet() {
               {openSegment === "couple" && (
                 <div className="bg-rose-50 rounded-xl p-3 space-y-2 border border-rose-200 animate-in fade-in slide-in-from-top-2 duration-200">
                   <Link to="/compatibility" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
-                    <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center">
                       <Icon name="Heart" size={14} className="text-rose-500" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-800">Совместимость пары</div>
-                      <div className="text-xs text-gray-400">Анализ двух дат рождения</div>
+                      <div className="text-sm font-medium text-gray-800 font-golos">Анализ отношений</div>
+                      <div className="text-xs text-gray-400 font-golos">Совместимость и динамика пары</div>
                     </div>
-                    <span className="text-xs font-bold text-rose-500">690 ₽</span>
+                    <span className="text-xs font-bold text-rose-500 font-golos">690 ₽</span>
                   </Link>
                   <Link to="/family" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
-                    <div className="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center">
-                      <Icon name="Users" size={14} className="text-pink-600" />
+                    <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center">
+                      <Icon name="Users" size={14} className="text-rose-500" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-800">Матрица судьбы семьи</div>
-                      <div className="text-xs text-gray-400">Полный анализ семейных связей</div>
+                      <div className="text-sm font-medium text-gray-800 font-golos">Анализ семьи</div>
+                      <div className="text-xs text-gray-400 font-golos">Полный анализ семейных связей</div>
                     </div>
-                    <span className="text-xs font-bold text-pink-600">1 990 ₽</span>
+                    <span className="text-xs font-bold text-rose-500 font-golos">1 990 ₽</span>
                   </Link>
                 </div>
               )}
 
               {openSegment === "child" && (
-                <div className="bg-violet-50 rounded-xl p-3 space-y-2 border border-violet-200 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="bg-[#F4F2FA] rounded-xl p-3 space-y-2 border border-[#E8E4F5] animate-in fade-in slide-in-from-top-2 duration-200">
                   <Link to="/child" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
-                    <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
-                      <Icon name="Baby" size={14} className="text-violet-500" />
+                    <div className="w-8 h-8 rounded-lg bg-[#F4F2FA] flex items-center justify-center">
+                      <Icon name="Baby" size={14} className="text-[#6C5BA7]" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-800">Анализ ребёнка</div>
-                      <div className="text-xs text-gray-400">Характер и потенциал ребёнка</div>
+                      <div className="text-sm font-medium text-gray-800 font-golos">Анализ личности ребёнка</div>
+                      <div className="text-xs text-gray-400 font-golos">Характер и потенциал ребёнка</div>
                     </div>
-                    <span className="text-xs font-bold text-violet-500">990 ₽</span>
+                    <span className="text-xs font-bold text-[#6C5BA7] font-golos">990 ₽</span>
                   </Link>
                   <Link to="/family" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
-                    <div className="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center">
-                      <Icon name="Users" size={14} className="text-pink-600" />
+                    <div className="w-8 h-8 rounded-lg bg-[#F4F2FA] flex items-center justify-center">
+                      <Icon name="Users" size={14} className="text-[#6C5BA7]" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-800">Матрица судьбы семьи</div>
-                      <div className="text-xs text-gray-400">Родители + дети — полная картина</div>
+                      <div className="text-sm font-medium text-gray-800 font-golos">Анализ семьи</div>
+                      <div className="text-xs text-gray-400 font-golos">Родители + дети — полная картина</div>
                     </div>
-                    <span className="text-xs font-bold text-pink-600">1 990 ₽</span>
+                    <span className="text-xs font-bold text-[#6C5BA7] font-golos">1 990 ₽</span>
                   </Link>
                 </div>
               )}
@@ -733,9 +735,11 @@ export default function Cabinet() {
               renderDetail(activeCalc)
             ) : (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
-                <div className="text-5xl mb-4">✨</div>
-                <h3 className="font-serif text-lg text-gray-800 mb-2">Выберите расчёт</h3>
-                <p className="text-gray-400 text-sm">Нажмите на любой расчёт слева, чтобы увидеть детали</p>
+                <div className="w-14 h-14 rounded-xl bg-[#F4F2FA] flex items-center justify-center mx-auto mb-4">
+                  <Icon name="MousePointerClick" size={24} className="text-[#6C5BA7]/50" />
+                </div>
+                <h3 className="font-golos font-semibold text-lg text-gray-800 mb-2">Выберите результат</h3>
+                <p className="text-gray-400 text-sm font-golos">Нажмите на любой результат слева, чтобы увидеть детали</p>
               </div>
             )}
           </div>

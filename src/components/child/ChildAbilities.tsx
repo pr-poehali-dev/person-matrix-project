@@ -91,7 +91,7 @@ export default function ChildAbilities({ profile }: { profile: ChildProfile }) {
           <SectionHeading
             icon="AlertTriangle"
             title="Зоны риска"
-            subtitle="Отсутствующие цифры в матрице"
+            subtitle="Области, требующие внимания"
             iconBg="bg-rose-100"
             iconColor="text-rose-600"
           />
@@ -118,7 +118,7 @@ export default function ChildAbilities({ profile }: { profile: ChildProfile }) {
                   <Icon
                     name="Lightbulb"
                     size={14}
-                    className="text-amber-500 shrink-0 mt-0.5"
+                    className="text-[#6C5BA7] shrink-0 mt-0.5"
                   />
                   <span className="text-sm text-gray-700">{risk.tip}</span>
                 </div>

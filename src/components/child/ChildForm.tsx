@@ -142,7 +142,7 @@ export default function ChildForm({
         className="mt-6 w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white text-sm font-semibold rounded-xl px-8 py-3.5 transition-all shadow-md shadow-purple-200/50 hover:shadow-lg hover:shadow-purple-300/50"
       >
         <Icon name="Sparkles" size={18} />
-        Рассчитать профиль ребёнка
+        Начать анализ
       </button>
     </Card>
   );

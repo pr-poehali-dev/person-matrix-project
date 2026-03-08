@@ -30,7 +30,7 @@ export default function ChildAnalysis() {
     setProfile(null);
 
     if (!birthDate) {
-      setError("Введите дату рождения ребёнка");
+      setError("Введите данные ребёнка");
       return;
     }
 
@@ -41,7 +41,7 @@ export default function ChildAnalysis() {
     );
 
     if (!result) {
-      setError("Не удалось выполнить расчёт. Проверьте дату.");
+      setError("Не удалось выполнить анализ. Проверьте данные.");
       return;
     }
 
@@ -118,12 +118,12 @@ export default function ChildAnalysis() {
       <header className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-30">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link to={getToken() ? "/cabinet" : "/"} className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full border border-amber-400 flex items-center justify-center">
-              <span className="font-serif text-sm font-bold text-amber-600">
+            <div className="w-7 h-7 rounded-lg bg-[#6C5BA7]/10 flex items-center justify-center">
+              <span className="font-golos text-sm font-bold text-[#6C5BA7]">
                 М
               </span>
             </div>
-            <span className="font-serif text-lg text-gray-800">
+            <span className="font-golos font-semibold text-lg text-[#4A3D7A] tracking-tight">
               Матрица личности
             </span>
           </Link>
@@ -142,12 +142,11 @@ export default function ChildAnalysis() {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-100 to-purple-200 mb-4">
             <Icon name="Baby" size={28} className="text-purple-700" />
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl text-gray-900 mb-2">
-            Детский нумерологический профиль
+          <h1 className="font-golos font-semibold text-3xl sm:text-4xl text-gray-900 mb-2">
+            Анализ личности ребёнка
           </h1>
           <p className="text-gray-400 text-sm max-w-lg mx-auto">
-            Узнайте таланты, характер и потенциал вашего ребёнка по дате
-            рождения
+            Узнайте таланты, характер и потенциал вашего ребёнка
           </p>
         </div>
 

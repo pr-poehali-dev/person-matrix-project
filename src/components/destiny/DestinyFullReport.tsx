@@ -8,8 +8,8 @@ function Section({
   icon,
   title,
   subtitle,
-  iconBg = "bg-amber-100",
-  iconColor = "text-amber-600",
+  iconBg = "bg-[#F4F2FA]",
+  iconColor = "text-[#6C5BA7]",
   children,
 }: {
   icon: string;
@@ -26,7 +26,7 @@ function Section({
           <Icon name={icon} size={20} className={iconColor} />
         </div>
         <div>
-          <h2 className="font-serif text-xl sm:text-2xl text-gray-900 leading-tight">{title}</h2>
+          <h2 className="font-golos text-xl sm:text-2xl font-semibold text-gray-900 leading-tight">{title}</h2>
           {subtitle && <p className="text-sm text-gray-400 mt-0.5">{subtitle}</p>}
         </div>
       </div>
@@ -47,9 +47,9 @@ export default function DestinyFullReport({ profile }: { profile: DestinyMapProf
             { n: profile.lifePath, label: "Жизненный путь" },
             { n: profile.lifePathBeforeReduce, label: "Промежуточная сумма" },
           ].map((item) => (
-            <div key={item.label} className="bg-amber-50/60 border border-amber-100 rounded-xl p-4 text-center">
-              <div className="text-3xl font-serif font-bold text-amber-700">{item.n}</div>
-              <div className="text-[11px] font-semibold text-amber-600 uppercase tracking-widest">{item.label}</div>
+            <div key={item.label} className="bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl p-4 text-center">
+              <div className="text-3xl font-golos font-bold text-[#6C5BA7]">{item.n}</div>
+              <div className="text-[11px] font-semibold text-[#6C5BA7] uppercase tracking-widest">{item.label}</div>
             </div>
           ))}
         </div>
@@ -67,9 +67,9 @@ export default function DestinyFullReport({ profile }: { profile: DestinyMapProf
             const count = profile.matrix[d] || 0;
             const filled = count > 0;
             return (
-              <div key={d} className={`rounded-xl p-3 sm:p-4 text-center border ${filled ? "bg-amber-50/80 border-amber-100" : "bg-gray-50 border-gray-100"}`}>
+              <div key={d} className={`rounded-xl p-3 sm:p-4 text-center border ${filled ? "bg-[#F4F2FA]/80 border-[#E8E4F5]" : "bg-gray-50 border-gray-100"}`}>
                 <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{MATRIX_LABELS[d]}</div>
-                <div className={`text-xl sm:text-2xl font-serif font-bold ${filled ? "text-amber-700" : "text-gray-300"}`}>
+                <div className={`text-xl sm:text-2xl font-golos font-bold ${filled ? "text-[#6C5BA7]" : "text-gray-300"}`}>
                   {count > 0 ? String(d).repeat(count) : "-"}
                 </div>
               </div>
@@ -80,14 +80,14 @@ export default function DestinyFullReport({ profile }: { profile: DestinyMapProf
 
       {/* 3. Архетип (подробнее) */}
       <Section icon="Shield" title="Архетип личности" subtitle={`${profile.archetype.label} — ${profile.archetype.element}`}>
-        <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-5 sm:p-6">
+        <div className="bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl p-5 sm:p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-200 flex items-center justify-center">
-              <Icon name="Crown" size={20} className="text-amber-700" />
+            <div className="w-10 h-10 rounded-xl bg-[#E8E4F5] flex items-center justify-center">
+              <Icon name="Crown" size={20} className="text-[#6C5BA7]" />
             </div>
             <div>
-              <div className="text-sm font-semibold text-amber-800">{profile.archetype.label}</div>
-              <div className="text-xs text-amber-500">«{profile.archetype.motto}»</div>
+              <div className="text-sm font-semibold text-[#4A3D7A]">{profile.archetype.label}</div>
+              <div className="text-xs text-[#6C5BA7]">«{profile.archetype.motto}»</div>
             </div>
           </div>
           <p className="text-gray-700 text-[15px] leading-relaxed">{profile.archetype.description}</p>
@@ -131,14 +131,14 @@ export default function DestinyFullReport({ profile }: { profile: DestinyMapProf
       </Section>
 
       {/* 6. Энергетика */}
-      <Section icon="Zap" title="Энергетика личности" subtitle={`${profile.energyLevel} — ${profile.energyIndex}%`} iconBg="bg-amber-100" iconColor="text-amber-600">
+      <Section icon="Zap" title="Энергетика личности" subtitle={`${profile.energyLevel} — ${profile.energyIndex}%`} iconBg="bg-[#F4F2FA]" iconColor="text-[#6C5BA7]">
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-4 text-center">
-            <div className="text-2xl font-serif font-bold text-amber-700">{profile.energyIndex}%</div>
-            <div className="text-xs text-amber-600 font-medium">Общая энергия</div>
+          <div className="bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl p-4 text-center">
+            <div className="text-2xl font-golos font-bold text-[#6C5BA7]">{profile.energyIndex}%</div>
+            <div className="text-xs text-[#6C5BA7] font-medium">Общая энергия</div>
           </div>
           <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
-            <div className="text-2xl font-serif font-bold text-gray-700">{profile.energyLevel}</div>
+            <div className="text-2xl font-golos font-bold text-gray-700">{profile.energyLevel}</div>
             <div className="text-xs text-gray-500 font-medium">Уровень</div>
           </div>
         </div>
@@ -194,20 +194,20 @@ export default function DestinyFullReport({ profile }: { profile: DestinyMapProf
       <Section icon="Banknote" title="Деньги и карьера" subtitle="Финансовый потенциал">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
           {[
-            { label: "Деньги", value: profile.moneyIndex, color: "amber", icon: "Banknote" },
-            { label: "Богатство", value: profile.wealthIndex, color: "amber", icon: "Gem" },
+            { label: "Деньги", value: profile.moneyIndex, color: "purple", icon: "Banknote" },
+            { label: "Богатство", value: profile.wealthIndex, color: "purple", icon: "Gem" },
             { label: "Успех", value: profile.successIndex, color: "emerald", icon: "Trophy" },
           ].map((idx) => (
             <div key={idx.label} className="bg-gray-50/80 border border-gray-100 rounded-xl p-4 text-center">
-              <Icon name={idx.icon} size={20} className="text-amber-600 mx-auto mb-1" />
-              <div className="text-2xl font-serif font-bold text-gray-900">{idx.value}%</div>
+              <Icon name={idx.icon} size={20} className="text-[#6C5BA7] mx-auto mb-1" />
+              <div className="text-2xl font-golos font-bold text-gray-900">{idx.value}%</div>
               <div className="text-xs text-gray-500 mb-2">{idx.label}</div>
               <ProgressBar value={idx.value} color={idx.color} />
             </div>
           ))}
         </div>
         {desc && (
-          <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-5">
+          <div className="bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl p-5">
             <p className="text-gray-700 text-[15px] leading-relaxed">{desc.finances}</p>
           </div>
         )}
@@ -273,7 +273,7 @@ export default function DestinyFullReport({ profile }: { profile: DestinyMapProf
                   <Icon name="Heart" size={16} className="text-rose-500" />
                   <span className="text-sm font-semibold text-gray-800">{p.label}</span>
                 </div>
-                <span className="text-sm font-bold text-amber-600">{p.score}%</span>
+                <span className="text-sm font-bold text-[#6C5BA7]">{p.score}%</span>
               </div>
               <ProgressBar value={p.score} color="rose" />
               <p className="text-xs text-gray-600 mt-2 leading-relaxed">{p.description}</p>
@@ -288,7 +288,7 @@ export default function DestinyFullReport({ profile }: { profile: DestinyMapProf
           {profile.lifeCycles.map((cycle, i) => (
             <div key={i} className="flex items-start gap-4 bg-gray-50/80 border border-gray-100 rounded-xl p-4">
               <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center shrink-0">
-                <span className="text-lg font-serif font-bold text-sky-700">{cycle.number}</span>
+                <span className="text-lg font-golos font-bold text-sky-700">{cycle.number}</span>
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
@@ -307,9 +307,9 @@ export default function DestinyFullReport({ profile }: { profile: DestinyMapProf
       <Section icon="CalendarCheck" title="Ключевые годы жизни" subtitle="Переломные моменты вашего пути">
         <div className="flex flex-wrap gap-3">
           {profile.keyAges.map((age) => (
-            <div key={age} className="bg-amber-50/60 border border-amber-100 rounded-xl px-5 py-3 text-center">
-              <div className="text-2xl font-serif font-bold text-amber-700">{age}</div>
-              <div className="text-[10px] font-semibold text-amber-500 uppercase">лет</div>
+            <div key={age} className="bg-[#F4F2FA]/60 border border-[#E8E4F5] rounded-xl px-5 py-3 text-center">
+              <div className="text-2xl font-golos font-bold text-[#6C5BA7]">{age}</div>
+              <div className="text-[10px] font-semibold text-[#6C5BA7] uppercase">лет</div>
             </div>
           ))}
         </div>
@@ -332,7 +332,7 @@ export default function DestinyFullReport({ profile }: { profile: DestinyMapProf
                 </div>
                 <p className="text-sm text-gray-600 mb-2">{lesson.description}</p>
                 <div className="flex items-start gap-2 bg-white/80 rounded-lg p-3">
-                  <Icon name="Lightbulb" size={14} className="text-amber-500 shrink-0 mt-0.5" />
+                  <Icon name="Lightbulb" size={14} className="text-[#6C5BA7] shrink-0 mt-0.5" />
                   <span className="text-sm text-gray-700">{lesson.howToWork}</span>
                 </div>
               </div>
@@ -345,11 +345,11 @@ export default function DestinyFullReport({ profile }: { profile: DestinyMapProf
       <Section icon="TrendingUp" title="Потенциал успеха" subtitle="Все индексы в одном месте" iconBg="bg-emerald-100" iconColor="text-emerald-600">
         <div className="space-y-4">
           {[
-            { label: "Энергия", value: profile.energyIndex, color: "amber", icon: "Zap" },
+            { label: "Энергия", value: profile.energyIndex, color: "purple", icon: "Zap" },
             { label: "Интеллект", value: profile.mindIndex, color: "sky", icon: "Brain" },
             { label: "Эмоции", value: profile.emotionIndex, color: "rose", icon: "Heart" },
             { label: "Лидерство", value: profile.leaderIndex, color: "purple", icon: "Crown" },
-            { label: "Деньги", value: profile.moneyIndex, color: "amber", icon: "Banknote" },
+            { label: "Деньги", value: profile.moneyIndex, color: "purple", icon: "Banknote" },
             { label: "Любовь", value: profile.loveIndex, color: "rose", icon: "Heart" },
             { label: "Успех", value: profile.successIndex, color: "emerald", icon: "Trophy" },
             { label: "Реализация", value: profile.realizationIndex, color: "indigo", icon: "Target" },
@@ -376,7 +376,7 @@ export default function DestinyFullReport({ profile }: { profile: DestinyMapProf
             {profile.risks.map((risk, i) => {
               const levelColors = {
                 high: { bg: "bg-red-50", border: "border-red-100", badge: "bg-red-100 text-red-700" },
-                medium: { bg: "bg-amber-50", border: "border-amber-100", badge: "bg-amber-100 text-amber-700" },
+                medium: { bg: "bg-orange-50", border: "border-orange-100", badge: "bg-orange-100 text-orange-700" },
                 low: { bg: "bg-emerald-50", border: "border-emerald-100", badge: "bg-emerald-100 text-emerald-700" },
               };
               const c = levelColors[risk.level];
