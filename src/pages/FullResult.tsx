@@ -83,11 +83,11 @@ export default function FullResult() {
             Перейдите на главную страницу и введите дату рождения для расчёта.
           </p>
           <Link
-            to="/"
+            to={getToken() ? "/cabinet" : "/"}
             className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-xl px-6 py-3 transition-colors"
           >
             <Icon name="ArrowLeft" size={16} />
-            На главную
+            {getToken() ? "В кабинет" : "На главную"}
           </Link>
         </Card>
       </div>
@@ -100,7 +100,7 @@ export default function FullResult() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-30">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
+          <Link to={getToken() ? "/cabinet" : "/"} className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-full border border-amber-400 flex items-center justify-center">
               <span className="font-serif text-sm font-bold text-amber-600">
                 М
@@ -111,11 +111,11 @@ export default function FullResult() {
             </span>
           </Link>
           <Link
-            to="/"
+            to={getToken() ? "/cabinet" : "/"}
             className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors"
           >
             <Icon name="ArrowLeft" size={15} />
-            На главную
+            {getToken() ? "В кабинет" : "На главную"}
           </Link>
         </div>
       </header>

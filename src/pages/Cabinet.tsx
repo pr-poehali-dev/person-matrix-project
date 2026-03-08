@@ -38,6 +38,7 @@ type Purchase = {
 };
 
 type CalcTab = "all" | "personal" | "compatibility" | "child" | "destiny";
+type Segment = "personal" | "couple" | "child" | null;
 
 const TAB_CONFIG: Record<CalcTab, { label: string; icon: string }> = {
   all: { label: "Все", icon: "LayoutGrid" },
@@ -142,6 +143,7 @@ export default function Cabinet() {
   const [activeCalc, setActiveCalc] = useState<Calculation | null>(null);
   const [balance, setBalance] = useState<number>(0);
   const [tab, setTab] = useState<CalcTab>("all");
+  const [openSegment, setOpenSegment] = useState<Segment>(null);
 
   useEffect(() => {
     if (!getToken()) { navigate("/auth"); return; }
@@ -560,19 +562,108 @@ export default function Cabinet() {
               )}
             </div>
 
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              <Link to="/" className="flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 border-dashed border-amber-200 text-amber-600 text-xs font-medium hover:bg-amber-50 transition-colors">
-                <Icon name="User" size={16} />
-                Личный
-              </Link>
-              <Link to="/compatibility" className="flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 border-dashed border-rose-200 text-rose-500 text-xs font-medium hover:bg-rose-50 transition-colors">
-                <Icon name="Heart" size={16} />
-                Пара
-              </Link>
-              <Link to="/child" className="flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 border-dashed border-violet-200 text-violet-500 text-xs font-medium hover:bg-violet-50 transition-colors">
-                <Icon name="Baby" size={16} />
-                Ребёнок
-              </Link>
+            <div className="mt-4 space-y-2">
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => setOpenSegment(openSegment === "personal" ? null : "personal")}
+                  className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 text-xs font-medium transition-colors ${openSegment === "personal" ? "border-amber-400 bg-amber-50 text-amber-700" : "border-dashed border-amber-200 text-amber-600 hover:bg-amber-50"}`}
+                >
+                  <Icon name="User" size={16} />
+                  Личный
+                  <Icon name={openSegment === "personal" ? "ChevronUp" : "ChevronDown"} size={12} />
+                </button>
+                <button
+                  onClick={() => setOpenSegment(openSegment === "couple" ? null : "couple")}
+                  className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 text-xs font-medium transition-colors ${openSegment === "couple" ? "border-rose-400 bg-rose-50 text-rose-600" : "border-dashed border-rose-200 text-rose-500 hover:bg-rose-50"}`}
+                >
+                  <Icon name="Heart" size={16} />
+                  Семья
+                  <Icon name={openSegment === "couple" ? "ChevronUp" : "ChevronDown"} size={12} />
+                </button>
+                <button
+                  onClick={() => setOpenSegment(openSegment === "child" ? null : "child")}
+                  className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 text-xs font-medium transition-colors ${openSegment === "child" ? "border-violet-400 bg-violet-50 text-violet-600" : "border-dashed border-violet-200 text-violet-500 hover:bg-violet-50"}`}
+                >
+                  <Icon name="Baby" size={16} />
+                  Ребёнок
+                  <Icon name={openSegment === "child" ? "ChevronUp" : "ChevronDown"} size={12} />
+                </button>
+              </div>
+
+              {openSegment === "personal" && (
+                <div className="bg-amber-50 rounded-xl p-3 space-y-2 border border-amber-200 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <Link to="/result" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                      <Icon name="Sparkles" size={14} className="text-amber-600" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-gray-800">Полный анализ личности</div>
+                      <div className="text-xs text-gray-400">Характер, судьба, таланты</div>
+                    </div>
+                    <span className="text-xs font-bold text-amber-600">490 ₽</span>
+                  </Link>
+                  <Link to="/destiny" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                      <Icon name="Map" size={14} className="text-indigo-600" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-gray-800">Полная карта судьбы</div>
+                      <div className="text-xs text-gray-400">Глубокий разбор всех аспектов</div>
+                    </div>
+                    <span className="text-xs font-bold text-indigo-600">1 490 ₽</span>
+                  </Link>
+                </div>
+              )}
+
+              {openSegment === "couple" && (
+                <div className="bg-rose-50 rounded-xl p-3 space-y-2 border border-rose-200 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <Link to="/compatibility" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
+                    <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center">
+                      <Icon name="Heart" size={14} className="text-rose-500" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-gray-800">Совместимость пары</div>
+                      <div className="text-xs text-gray-400">Анализ двух дат рождения</div>
+                    </div>
+                    <span className="text-xs font-bold text-rose-500">690 ₽</span>
+                  </Link>
+                  <Link to="/family" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
+                    <div className="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center">
+                      <Icon name="Users" size={14} className="text-pink-600" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-gray-800">Матрица судьбы семьи</div>
+                      <div className="text-xs text-gray-400">Полный анализ семейных связей</div>
+                    </div>
+                    <span className="text-xs font-bold text-pink-600">1 990 ₽</span>
+                  </Link>
+                </div>
+              )}
+
+              {openSegment === "child" && (
+                <div className="bg-violet-50 rounded-xl p-3 space-y-2 border border-violet-200 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <Link to="/child" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
+                    <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
+                      <Icon name="Baby" size={14} className="text-violet-500" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-gray-800">Анализ ребёнка</div>
+                      <div className="text-xs text-gray-400">Характер и потенциал ребёнка</div>
+                    </div>
+                    <span className="text-xs font-bold text-violet-500">990 ₽</span>
+                  </Link>
+                  <Link to="/family" className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-sm transition-shadow">
+                    <div className="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center">
+                      <Icon name="Users" size={14} className="text-pink-600" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-gray-800">Матрица судьбы семьи</div>
+                      <div className="text-xs text-gray-400">Родители + дети — полная картина</div>
+                    </div>
+                    <span className="text-xs font-bold text-pink-600">1 990 ₽</span>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
 
