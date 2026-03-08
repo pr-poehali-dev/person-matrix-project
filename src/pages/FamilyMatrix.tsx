@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "@/components/ui/icon";
-import { getToken } from "@/lib/auth";
+import { getToken, saveFamilyCalc } from "@/lib/auth";
 import { checkPurchase, spend, getBalance } from "@/lib/payments";
 import { calcFamilyMatrix } from "@/lib/family-matrix";
 import type { FamilyAnalysis } from "@/lib/family-matrix";
@@ -50,6 +50,9 @@ export default function FamilyMatrix() {
     setAnalysis(result);
 
     const token = getToken();
+    if (token) {
+      saveFamilyCalc(parent1Date, parent2Date).catch(() => {});
+    }
     if (token) {
       Promise.all([
         checkPurchase("family_matrix", {

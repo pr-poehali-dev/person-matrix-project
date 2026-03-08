@@ -20,7 +20,7 @@ type Calculation = {
   character_num: number;
   destiny: number;
   created_at: string;
-  calc_type: "personal" | "compatibility" | "child" | "destiny";
+  calc_type: "personal" | "compatibility" | "child" | "destiny" | "family";
   birth_date2: string | null;
   child_name: string | null;
   soul_urge: number | null;
@@ -37,7 +37,7 @@ type Purchase = {
   created_at: string;
 };
 
-type CalcTab = "all" | "personal" | "compatibility" | "child" | "destiny";
+type CalcTab = "all" | "personal" | "compatibility" | "child" | "destiny" | "family";
 type Segment = "personal" | "couple" | "child" | null;
 
 const TAB_CONFIG: Record<CalcTab, { label: string; icon: string }> = {
@@ -46,6 +46,7 @@ const TAB_CONFIG: Record<CalcTab, { label: string; icon: string }> = {
   destiny: { label: "Карта судьбы", icon: "Map" },
   compatibility: { label: "Совместимость", icon: "Heart" },
   child: { label: "Ребёнок", icon: "Baby" },
+  family: { label: "Матрица семьи", icon: "Users" },
 };
 
 const TYPE_LABELS: Record<string, { label: string; icon: string; color: string; bg: string }> = {
@@ -53,6 +54,7 @@ const TYPE_LABELS: Record<string, { label: string; icon: string; color: string; 
   destiny: { label: "Карта судьбы", icon: "Map", color: "text-indigo-600", bg: "bg-indigo-100" },
   compatibility: { label: "Совместимость", icon: "Heart", color: "text-rose-600", bg: "bg-rose-100" },
   child: { label: "Ребёнок", icon: "Baby", color: "text-violet-600", bg: "bg-violet-100" },
+  family: { label: "Матрица семьи", icon: "Users", color: "text-emerald-600", bg: "bg-emerald-100" },
 };
 
 function isPurchased(calc: Calculation, purchases: Purchase[]): boolean {
@@ -76,6 +78,11 @@ function isPurchased(calc: Calculation, purchases: Purchase[]): boolean {
       p => p.product === "destiny_map" && p.birth_date === calc.birth_date
     );
   }
+  if (calc.calc_type === "family") {
+    return purchases.some(
+      p => p.product === "family_matrix" && p.birth_date === calc.birth_date && p.birth_date2 === calc.birth_date2
+    );
+  }
   return false;
 }
 
@@ -92,6 +99,9 @@ function getCalcLink(calc: Calculation): string {
   }
   if (calc.calc_type === "destiny") {
     return `/destiny?date=${calc.birth_date}`;
+  }
+  if (calc.calc_type === "family" && calc.birth_date2) {
+    return `/family?date1=${calc.birth_date}&date2=${calc.birth_date2}`;
   }
   return "/";
 }
@@ -174,6 +184,7 @@ export default function Cabinet() {
     destiny: calculations.filter(c => c.calc_type === "destiny").length,
     compatibility: calculations.filter(c => c.calc_type === "compatibility").length,
     child: calculations.filter(c => c.calc_type === "child").length,
+    family: calculations.filter(c => c.calc_type === "family").length,
   };
 
   if (loading) {
@@ -185,7 +196,7 @@ export default function Cabinet() {
   }
 
   const renderCalcTitle = (calc: Calculation) => {
-    if (calc.calc_type === "compatibility") {
+    if (calc.calc_type === "compatibility" || calc.calc_type === "family") {
       return `${calc.birth_date} + ${calc.birth_date2}`;
     }
     if (calc.calc_type === "child" && calc.child_name) {
@@ -212,6 +223,13 @@ export default function Cabinet() {
           }}
         >
           {calc.overall_score}%
+        </span>
+      );
+    }
+    if (calc.calc_type === "family") {
+      return (
+        <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 text-xs flex items-center justify-center">
+          <Icon name="Users" size={12} />
         </span>
       );
     }
@@ -268,6 +286,49 @@ export default function Cabinet() {
             ) : (
               <Link to={link}
                 className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors border-2 border-rose-200 text-rose-600 hover:bg-rose-50">
+                <Icon name="Lock" size={14} />
+                Получить полный расчёт
+              </Link>
+            )}
+          </div>
+
+          {paid && (
+            <div className="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3">
+              <Icon name="CheckCircle" size={18} className="text-green-500 shrink-0" />
+              <span className="text-sm text-green-700">Полный отчёт оплачен и доступен</span>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (calc.calc_type === "family") {
+      return (
+        <div className="space-y-5">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-lg ${type.bg} flex items-center justify-center`}>
+                  <Icon name={type.icon} size={16} className={type.color} />
+                </div>
+                <div>
+                  <h2 className="font-serif text-xl text-gray-900">Матрица семьи</h2>
+                  <p className="text-xs text-gray-400">{calc.birth_date} и {calc.birth_date2}</p>
+                </div>
+              </div>
+              <span className="text-xs text-gray-400">{formatDate(calc.created_at)}</span>
+            </div>
+
+            {paid ? (
+              <Link to={link}
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors text-white"
+                style={{ background: "linear-gradient(135deg, #047857, #059669, #34d399)" }}>
+                <Icon name="ArrowRight" size={14} />
+                Открыть полный отчёт
+              </Link>
+            ) : (
+              <Link to={link}
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors border-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50">
                 <Icon name="Lock" size={14} />
                 Получить полный расчёт
               </Link>
@@ -525,7 +586,7 @@ export default function Cabinet() {
                   <p className="text-gray-400 text-sm mb-4">
                     {tab === "all" ? "Расчётов пока нет" : `Нет расчётов в категории «${TAB_CONFIG[tab].label}»`}
                   </p>
-                  <Link to={tab === "compatibility" ? "/compatibility" : tab === "child" ? "/child" : "/"} className="text-sm text-amber-600 font-medium hover:underline">
+                  <Link to={tab === "compatibility" ? "/compatibility" : tab === "child" ? "/child" : tab === "family" ? "/family" : tab === "destiny" ? "/destiny" : "/"} className="text-sm text-amber-600 font-medium hover:underline">
                     Сделать расчёт →
                   </Link>
                 </div>

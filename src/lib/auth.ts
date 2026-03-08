@@ -62,3 +62,7 @@ export async function saveChildCalc(birth_date: string, child_name: string, life
 export async function saveDestinyCalc(birth_date: string, life_path: number) {
   return call("save-calculation", { birth_date, life_path, character_num: 0, destiny: 0, calc_type: "destiny" });
 }
+
+export async function saveFamilyCalc(birth_date: string, birth_date2: string) {
+  return call("save-calculation", { birth_date, birth_date2, life_path: 0, character_num: 0, destiny: 0, calc_type: "family" });
+}
