@@ -182,6 +182,16 @@ const TRAINERS: ToolItem[] = [
     color: "text-[#E06B2E]",
     bg: "bg-[#FFF3EC]",
   },
+  {
+    id: "lang-relations",
+    title: "Язык отношений",
+    description: "Анализируйте паттерны в отношениях, находите точки напряжения и улучшайте взаимопонимание",
+    icon: "HeartHandshake",
+    free: false,
+    route: "/trainer/lang-relations",
+    color: "text-rose-500",
+    bg: "bg-rose-50",
+  },
 ];
 
 function formatPrice(price: number): string {
