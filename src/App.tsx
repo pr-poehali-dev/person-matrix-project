@@ -18,6 +18,7 @@ import Catalog from "./pages/Catalog";
 import History from "./pages/History";
 import EmotionChain from "./pages/EmotionChain";
 import EmotionChainResult from "./pages/EmotionChainResult";
+import Barriers from "./pages/Barriers";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/history" element={<History />} />
           <Route path="/trainer/emotion-chain" element={<EmotionChain />} />
           <Route path="/trainer/emotion-chain/result" element={<EmotionChainResult />} />
+          <Route path="/trainer/barriers" element={<Barriers />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

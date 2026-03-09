@@ -172,6 +172,16 @@ const TRAINERS: ToolItem[] = [
     color: "text-[#6C5BA7]",
     bg: "bg-[#F4F2FA]",
   },
+  {
+    id: "barriers",
+    title: "Барьеры, тревоги и стресс",
+    description: "Воссоздайте прошлый провал, найдите точку срыва и узнайте, как удержаться в следующий раз",
+    icon: "BarChart2",
+    free: false,
+    route: "/trainer/barriers",
+    color: "text-[#E06B2E]",
+    bg: "bg-[#FFF3EC]",
+  },
 ];
 
 function formatPrice(price: number): string {
@@ -246,9 +256,15 @@ export default function Cabinet() {
         <div className={`w-11 h-11 rounded-xl ${tool.bg} flex items-center justify-center`}>
           <Icon name={tool.icon} size={22} className={tool.color} />
         </div>
-        <span className="text-xs font-medium text-violet-600 bg-violet-50 border border-violet-100 px-2.5 py-1 rounded-full">
-          Бесплатно
-        </span>
+        {tool.free ? (
+          <span className="text-xs font-medium text-violet-600 bg-violet-50 border border-violet-100 px-2.5 py-1 rounded-full">
+            Бесплатно
+          </span>
+        ) : (
+          <span className="text-xs font-medium text-[#C45520] bg-[#FFF3EC] border border-orange-100 px-2.5 py-1 rounded-full">
+            290 ₽
+          </span>
+        )}
       </div>
       <div>
         <h3 className="font-golos font-semibold text-base text-[#4A3D7A] mb-1">{tool.title}</h3>
