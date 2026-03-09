@@ -49,6 +49,7 @@ export const PRODUCT_PRICES: Record<string, number> = {
   destiny_map: 1490,
   family_matrix: 1990,
   barriers_anxiety: 290,
+  lang_relations: 390,
 };
 
 export const PRODUCT_NAMES: Record<string, string> = {
@@ -58,4 +59,5 @@ export const PRODUCT_NAMES: Record<string, string> = {
   destiny_map: "Полная карта судьбы",
   family_matrix: "Матрица судьбы семьи",
   barriers_anxiety: "Барьеры, тревоги и стресс",
+  lang_relations: "Язык отношений",
 };

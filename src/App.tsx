@@ -19,6 +19,7 @@ import History from "./pages/History";
 import EmotionChain from "./pages/EmotionChain";
 import EmotionChainResult from "./pages/EmotionChainResult";
 import Barriers from "./pages/Barriers";
+import LangRelations from "./pages/LangRelations";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/trainer/emotion-chain" element={<EmotionChain />} />
           <Route path="/trainer/emotion-chain/result" element={<EmotionChainResult />} />
           <Route path="/trainer/barriers" element={<Barriers />} />
+          <Route path="/trainer/lang-relations" element={<LangRelations />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
