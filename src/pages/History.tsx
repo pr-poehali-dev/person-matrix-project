@@ -14,6 +14,21 @@ type Purchase = {
   created_at: string;
 };
 
+type TrainerResult = {
+  id: number;
+  trainer_type: string;
+  result_data: Record<string, unknown>;
+  created_at: string;
+};
+
+type HistoryItem = {
+  type: "purchase" | "trainer";
+  id: number;
+  created_at: string;
+  purchase?: Purchase;
+  trainer?: TrainerResult;
+};
+
 const PRODUCT_ICONS: Record<string, string> = {
   full_analysis: "Brain",
   compatibility: "HeartHandshake",
@@ -28,6 +43,10 @@ const PRODUCT_COLORS: Record<string, { color: string; bg: string }> = {
   child_analysis: { color: "text-[#6C5BA7]", bg: "bg-[#F4F2FA]" },
   destiny_map: { color: "text-[#6C5BA7]", bg: "bg-[#F4F2FA]" },
   family_matrix: { color: "text-emerald-600", bg: "bg-emerald-50" },
+};
+
+const TRAINER_META: Record<string, { title: string; icon: string; color: string; bg: string }> = {
+  emotion_chain: { title: "Цепочка чувств", icon: "Link", color: "text-violet-600", bg: "bg-violet-50" },
 };
 
 function buildResultLink(p: Purchase): string {
@@ -82,19 +101,37 @@ function buildSubtitle(p: Purchase): string {
   }
 }
 
+function buildTrainerSubtitle(t: TrainerResult): string {
+  const rd = t.result_data;
+  if (t.trainer_type === "emotion_chain" && rd.problem_text) {
+    const text = String(rd.problem_text);
+    return text.length > 60 ? text.slice(0, 60) + "..." : text;
+  }
+  return "";
+}
+
 export default function History() {
   const navigate = useNavigate();
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [items, setItems] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!getToken()) { navigate("/auth"); return; }
     getMe().then(res => {
       if (res.status === 200 && typeof res.data === "object" && res.data !== null && "user" in res.data) {
-        const d = res.data as { purchases: Purchase[] };
-        setPurchases((d.purchases || []).sort((a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        ));
+        const d = res.data as { purchases: Purchase[]; trainer_results?: TrainerResult[] };
+        const all: HistoryItem[] = [];
+
+        (d.purchases || []).forEach(p => {
+          all.push({ type: "purchase", id: p.id, created_at: p.created_at, purchase: p });
+        });
+
+        (d.trainer_results || []).forEach(t => {
+          all.push({ type: "trainer", id: t.id, created_at: t.created_at, trainer: t });
+        });
+
+        all.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        setItems(all);
       } else {
         navigate("/auth");
       }
@@ -129,60 +166,102 @@ export default function History() {
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-8">
         <div className="mb-8">
           <h1 className="font-golos font-semibold text-2xl text-gray-900 mb-1">Мои результаты</h1>
-          <p className="text-gray-400 text-sm font-golos">Все ваши оплаченные анализы в одном месте</p>
+          <p className="text-gray-400 text-sm font-golos">Все ваши анализы и тренажёры в одном месте</p>
         </div>
 
-        {purchases.length === 0 ? (
+        {items.length === 0 ? (
           <div className="bg-white rounded-2xl soft-shadow p-10 text-center">
             <div className="w-14 h-14 rounded-2xl bg-[#F4F2FA] flex items-center justify-center mx-auto mb-4">
               <Icon name="Clock" size={24} className="text-[#6C5BA7]" />
             </div>
             <h2 className="font-golos font-semibold text-lg text-gray-800 mb-2">Пока нет результатов</h2>
             <p className="font-golos text-sm text-gray-400 mb-6 max-w-sm mx-auto">
-              Пройдите один из платных анализов, и его результат появится здесь
+              Пройдите анализ или тренажёр, и результат появится здесь
             </p>
             <Link
               to="/cabinet"
               className="inline-flex items-center gap-2 gradient-primary text-white font-golos text-sm font-medium px-6 py-2.5 rounded-xl hover:opacity-90 transition-all"
             >
-              Выбрать анализ
+              Выбрать инструмент
               <Icon name="ArrowRight" size={15} />
             </Link>
           </div>
         ) : (
           <div className="space-y-3">
-            {purchases.map(p => {
-              const colors = PRODUCT_COLORS[p.product] || { color: "text-gray-600", bg: "bg-gray-100" };
-              const subtitle = buildSubtitle(p);
+            {items.map(item => {
+              if (item.type === "purchase" && item.purchase) {
+                const p = item.purchase;
+                const colors = PRODUCT_COLORS[p.product] || { color: "text-gray-600", bg: "bg-gray-100" };
+                const subtitle = buildSubtitle(p);
 
-              return (
-                <Link
-                  key={p.id}
-                  to={buildResultLink(p)}
-                  className="bg-white rounded-2xl soft-shadow p-5 flex items-center gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5 group block"
-                >
-                  <div className={`w-12 h-12 rounded-xl ${colors.bg} flex items-center justify-center flex-shrink-0`}>
-                    <Icon name={PRODUCT_ICONS[p.product] || "FileText"} size={22} className={colors.color} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-golos font-semibold text-[15px] text-[#4A3D7A] mb-0.5">
-                      {PRODUCT_NAMES[p.product] || p.product}
-                    </h3>
-                    {subtitle && (
-                      <p className="font-golos text-sm text-gray-400 truncate">{subtitle}</p>
-                    )}
-                    <p className="font-golos text-xs text-gray-300 mt-1">{formatDate(p.created_at)}</p>
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-xs font-medium text-gray-400 font-golos hidden sm:block">
-                      {p.amount} ₽
-                    </span>
-                    <div className="w-8 h-8 rounded-lg bg-[#F4F2FA] flex items-center justify-center group-hover:bg-[#6C5BA7] transition-colors">
-                      <Icon name="ArrowRight" size={14} className="text-[#6C5BA7] group-hover:text-white transition-colors" />
+                return (
+                  <Link
+                    key={`p-${p.id}`}
+                    to={buildResultLink(p)}
+                    className="bg-white rounded-2xl soft-shadow p-5 flex items-center gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5 group block"
+                  >
+                    <div className={`w-12 h-12 rounded-xl ${colors.bg} flex items-center justify-center flex-shrink-0`}>
+                      <Icon name={PRODUCT_ICONS[p.product] || "FileText"} size={22} className={colors.color} />
                     </div>
-                  </div>
-                </Link>
-              );
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-golos font-semibold text-[15px] text-[#4A3D7A] mb-0.5">
+                        {PRODUCT_NAMES[p.product] || p.product}
+                      </h3>
+                      {subtitle && (
+                        <p className="font-golos text-sm text-gray-400 truncate">{subtitle}</p>
+                      )}
+                      <p className="font-golos text-xs text-gray-300 mt-1">{formatDate(p.created_at)}</p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-xs font-medium text-gray-400 font-golos hidden sm:block">
+                        {p.amount} ₽
+                      </span>
+                      <div className="w-8 h-8 rounded-lg bg-[#F4F2FA] flex items-center justify-center group-hover:bg-[#6C5BA7] transition-colors">
+                        <Icon name="ArrowRight" size={14} className="text-[#6C5BA7] group-hover:text-white transition-colors" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              }
+
+              if (item.type === "trainer" && item.trainer) {
+                const t = item.trainer;
+                const meta = TRAINER_META[t.trainer_type] || { title: t.trainer_type, icon: "Dumbbell", color: "text-violet-600", bg: "bg-violet-50" };
+                const subtitle = buildTrainerSubtitle(t);
+
+                return (
+                  <Link
+                    key={`t-${t.id}`}
+                    to={`/trainer/emotion-chain/result?id=${t.id}`}
+                    className="bg-white rounded-2xl soft-shadow p-5 flex items-center gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5 group block"
+                  >
+                    <div className={`w-12 h-12 rounded-xl ${meta.bg} flex items-center justify-center flex-shrink-0`}>
+                      <Icon name={meta.icon} size={22} className={meta.color} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h3 className="font-golos font-semibold text-[15px] text-[#4A3D7A]">
+                          {meta.title}
+                        </h3>
+                        <span className="text-[10px] font-medium text-violet-600 bg-violet-50 border border-violet-100 px-1.5 py-0.5 rounded-full">
+                          Тренажёр
+                        </span>
+                      </div>
+                      {subtitle && (
+                        <p className="font-golos text-sm text-gray-400 truncate">{subtitle}</p>
+                      )}
+                      <p className="font-golos text-xs text-gray-300 mt-1">{formatDate(t.created_at)}</p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center group-hover:bg-violet-600 transition-colors">
+                        <Icon name="ArrowRight" size={14} className="text-violet-600 group-hover:text-white transition-colors" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              }
+
+              return null;
             })}
           </div>
         )}

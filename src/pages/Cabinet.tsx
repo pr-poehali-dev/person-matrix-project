@@ -161,6 +161,19 @@ const PAID_TOOLS: ToolItem[] = [
   },
 ];
 
+const TRAINERS: ToolItem[] = [
+  {
+    id: "emotion-chain",
+    title: "Цепочка чувств",
+    description: "Осознайте свои эмоции, найдите глубинное переживание и измените восприятие ситуации",
+    icon: "Link",
+    free: true,
+    route: "/trainer/emotion-chain",
+    color: "text-[#6C5BA7]",
+    bg: "bg-[#F4F2FA]",
+  },
+];
+
 function formatPrice(price: number): string {
   return price.toLocaleString("ru-RU") + " ₽";
 }
@@ -169,6 +182,7 @@ export default function Cabinet() {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [trainerCount, setTrainerCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [balance, setBalance] = useState<number>(0);
 
@@ -176,9 +190,10 @@ export default function Cabinet() {
     if (!getToken()) { navigate("/auth"); return; }
     getMe().then(res => {
       if (res.status === 200 && typeof res.data === "object" && res.data !== null && "user" in res.data) {
-        const d = res.data as { user: User; calculations: unknown[]; purchases: Purchase[] };
+        const d = res.data as { user: User; calculations: unknown[]; purchases: Purchase[]; trainer_results?: unknown[] };
         setUser(d.user);
         setPurchases(d.purchases || []);
+        setTrainerCount((d.trainer_results || []).length);
         getBalance().then(r => {
           if (r.status === 200 && r.data?.balance !== undefined) setBalance(r.data.balance as number);
         });
@@ -220,6 +235,30 @@ export default function Cabinet() {
         className="mt-auto inline-flex items-center justify-center gap-2 gradient-primary text-white font-golos text-sm font-medium py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
       >
         Пройти тест
+        <Icon name="ArrowRight" size={15} />
+      </button>
+    </div>
+  );
+
+  const renderTrainerCard = (tool: ToolItem) => (
+    <div key={tool.id} className="bg-white rounded-2xl soft-shadow p-6 flex flex-col gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5">
+      <div className="flex items-start justify-between">
+        <div className={`w-11 h-11 rounded-xl ${tool.bg} flex items-center justify-center`}>
+          <Icon name={tool.icon} size={22} className={tool.color} />
+        </div>
+        <span className="text-xs font-medium text-violet-600 bg-violet-50 border border-violet-100 px-2.5 py-1 rounded-full">
+          Бесплатно
+        </span>
+      </div>
+      <div>
+        <h3 className="font-golos font-semibold text-base text-[#4A3D7A] mb-1">{tool.title}</h3>
+        <p className="font-golos text-sm text-gray-400 leading-relaxed">{tool.description}</p>
+      </div>
+      <button
+        onClick={() => navigate(tool.route)}
+        className="mt-auto inline-flex items-center justify-center gap-2 gradient-primary text-white font-golos text-sm font-medium py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
+      >
+        Начать тренировку
         <Icon name="ArrowRight" size={15} />
       </button>
     </div>
@@ -287,7 +326,7 @@ export default function Cabinet() {
           <p className="text-gray-400 text-sm font-golos">Выберите тест или инструмент для анализа</p>
         </div>
 
-        {purchases.length > 0 && (
+        {(purchases.length > 0 || trainerCount > 0) && (
           <Link
             to="/history"
             className="mb-8 bg-white rounded-2xl soft-shadow p-5 flex items-center gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5 group block"
@@ -298,7 +337,7 @@ export default function Cabinet() {
             <div className="flex-1">
               <h3 className="font-golos font-semibold text-[15px] text-[#4A3D7A]">Мои результаты</h3>
               <p className="font-golos text-sm text-gray-400">
-                {purchases.length} {purchases.length === 1 ? "анализ" : purchases.length < 5 ? "анализа" : "анализов"} — нажмите, чтобы посмотреть
+                {purchases.length + trainerCount} {(purchases.length + trainerCount) === 1 ? "результат" : (purchases.length + trainerCount) < 5 ? "результата" : "результатов"} — нажмите, чтобы посмотреть
               </p>
             </div>
             <div className="w-8 h-8 rounded-lg bg-[#F4F2FA] flex items-center justify-center group-hover:bg-[#6C5BA7] transition-colors flex-shrink-0">
@@ -319,7 +358,7 @@ export default function Cabinet() {
           </div>
         </section>
 
-        <section>
+        <section className="mb-10">
           <div className="flex items-center gap-2 mb-5">
             <div className="w-8 h-8 rounded-lg bg-[#F4F2FA] flex items-center justify-center">
               <Icon name="Brain" size={16} className="text-[#6C5BA7]" />
@@ -328,6 +367,18 @@ export default function Cabinet() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {PAID_TOOLS.map(renderPaidCard)}
+          </div>
+        </section>
+
+        <section>
+          <div className="flex items-center gap-2 mb-5">
+            <div className="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center">
+              <Icon name="Dumbbell" size={16} className="text-violet-600" />
+            </div>
+            <h2 className="font-golos text-lg font-semibold text-gray-800">Тренажёры</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {TRAINERS.map(renderTrainerCard)}
           </div>
         </section>
       </main>

@@ -147,11 +147,23 @@ def handler(event: dict, context) -> dict:
                     "child_name": p[4], "amount": p[5], "created_at": str(p[6]),
                 })
 
+            cur.execute(
+                f"SELECT id, trainer_type, result_data, created_at "
+                f"FROM {SCHEMA}.trainer_results WHERE user_id = {user['id']} ORDER BY created_at DESC LIMIT 50"
+            )
+            trows = cur.fetchall()
+            trainer_results = []
+            for t in trows:
+                rd = t[2] if isinstance(t[2], dict) else json.loads(t[2])
+                trainer_results.append({
+                    "id": t[0], "trainer_type": t[1], "result_data": rd, "created_at": str(t[3]),
+                })
+
             cur.close()
             conn.close()
             return {"statusCode": 200, "headers": CORS, "body": json.dumps({
-                "user": user, "calculations": calcs, "purchases": purchases
-            })}
+                "user": user, "calculations": calcs, "purchases": purchases, "trainer_results": trainer_results
+            }, ensure_ascii=False)}
 
         if action == "logout":
             if token:

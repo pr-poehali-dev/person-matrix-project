@@ -16,6 +16,8 @@ import FamilyMatrix from "./pages/FamilyMatrix";
 import DestinyMap from "./pages/DestinyMap";
 import Catalog from "./pages/Catalog";
 import History from "./pages/History";
+import EmotionChain from "./pages/EmotionChain";
+import EmotionChainResult from "./pages/EmotionChainResult";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +41,8 @@ const App = () => (
           <Route path="/destiny" element={<DestinyMap />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/history" element={<History />} />
+          <Route path="/trainer/emotion-chain" element={<EmotionChain />} />
+          <Route path="/trainer/emotion-chain/result" element={<EmotionChainResult />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

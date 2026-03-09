@@ -1,0 +1,19 @@
+{
+  "tests": [
+    {
+      "name": "Save trainer result without auth",
+      "method": "POST",
+      "path": "/",
+      "body": {"action": "save", "trainer_type": "emotion_chain", "result_data": {"test": true}},
+      "expectedStatus": 401,
+      "bodyMatcher": "none"
+    },
+    {
+      "name": "OPTIONS preflight",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200,
+      "bodyMatcher": "none"
+    }
+  ]
+}
