@@ -23,6 +23,7 @@ PRICES = {
     "destiny_map": 1490,
     "family_matrix": 1990,
     "barriers_anxiety": 290,
+    "lang_relations": 390,
 }
 
 PRODUCT_NAMES = {
@@ -32,6 +33,7 @@ PRODUCT_NAMES = {
     "destiny_map": "Полная карта судьбы",
     "family_matrix": "Матрица судьбы семьи",
     "barriers_anxiety": "Барьеры, тревоги и стресс",
+    "lang_relations": "Язык отношений",
 }
 
 

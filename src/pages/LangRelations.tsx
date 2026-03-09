@@ -34,13 +34,34 @@ export default function LangRelations() {
 
   useEffect(() => {
     if (!isAuth) { setPaywallLoading(false); return; }
-    Promise.all([
+    const token = getToken();
+    const promises: Promise<unknown>[] = [
       checkPurchase("lang_relations"),
       getBalance(),
-    ]).then(([purchaseRes, balanceRes]) => {
-      if (purchaseRes.status === 200 && purchaseRes.data?.purchased) setPurchased(true);
-      if (balanceRes.status === 200 && balanceRes.data?.balance !== undefined)
-        setBalance(balanceRes.data.balance as number);
+    ];
+    if (token && "trainers" in func2url) {
+      promises.push(
+        fetch((func2url as Record<string, string>)["trainers"], {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Auth-Token": token },
+          body: JSON.stringify({ action: "list", trainer_type: "lang_relations" }),
+        }).then(r => r.json()).catch(() => [])
+      );
+    }
+    Promise.all(promises).then(([purchaseRes, balanceRes, historyData]) => {
+      const pr = purchaseRes as { status: number; data?: Record<string, unknown> };
+      const br = balanceRes as { status: number; data?: Record<string, unknown> };
+      if (pr.status === 200 && pr.data?.purchased) setPurchased(true);
+      if (br.status === 200 && br.data?.balance !== undefined)
+        setBalance(br.data.balance as number);
+      if (Array.isArray(historyData) && historyData.length > 0) {
+        const latest = historyData[0];
+        const saved = latest.result_data?.entries as LREntry[] | undefined;
+        if (saved && saved.length > 0) {
+          setEntries(saved);
+          setFreeUsed(true);
+        }
+      }
     }).finally(() => setPaywallLoading(false));
   }, []);
 

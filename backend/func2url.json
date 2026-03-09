@@ -1,4 +1,8 @@
 {
+  "payment": "https://functions.poehali.dev/8de9fb2b-88fc-4ab6-86a7-4f5ec7e14732",
+  "friends": "https://functions.poehali.dev/94af6cee-2a11-412e-98a0-c012cb523cb7",
+  "leaderboard": "https://functions.poehali.dev/5c6529a2-b077-42f7-bae1-8d3c494c250f",
+  "room-manager": "https://functions.poehali.dev/72217876-7aa5-4f08-8d8b-40cf555024c1",
   "trainers": "https://functions.poehali.dev/b6e19dfa-80df-48e0-b1f0-ad688564255a",
   "destiny-pdf": "https://functions.poehali.dev/45f2bd64-122c-4c3c-a422-b6425dfae7bb",
   "child-pdf": "https://functions.poehali.dev/625e04e4-6d01-4b12-8ac3-a4bcf2aac87b",
