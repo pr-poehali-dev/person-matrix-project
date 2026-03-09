@@ -35,6 +35,7 @@ const PRODUCT_ICONS: Record<string, string> = {
   child_analysis: "Baby",
   destiny_map: "Map",
   family_matrix: "Users",
+  barriers_anxiety: "BarChart2",
 };
 
 const PRODUCT_COLORS: Record<string, { color: string; bg: string }> = {
@@ -43,10 +44,12 @@ const PRODUCT_COLORS: Record<string, { color: string; bg: string }> = {
   child_analysis: { color: "text-[#6C5BA7]", bg: "bg-[#F4F2FA]" },
   destiny_map: { color: "text-[#6C5BA7]", bg: "bg-[#F4F2FA]" },
   family_matrix: { color: "text-emerald-600", bg: "bg-emerald-50" },
+  barriers_anxiety: { color: "text-[#E06B2E]", bg: "bg-[#FFF3EC]" },
 };
 
 const TRAINER_META: Record<string, { title: string; icon: string; color: string; bg: string }> = {
   emotion_chain: { title: "Цепочка чувств", icon: "Link", color: "text-violet-600", bg: "bg-violet-50" },
+  barriers_anxiety: { title: "Барьеры, тревоги и стресс", icon: "BarChart2", color: "text-[#E06B2E]", bg: "bg-[#FFF3EC]" },
 };
 
 function buildResultLink(p: Purchase): string {
@@ -61,6 +64,8 @@ function buildResultLink(p: Purchase): string {
       return `/destiny?date=${p.birth_date}`;
     case "family_matrix":
       return `/family?date1=${p.birth_date}&date2=${p.birth_date2}`;
+    case "barriers_anxiety":
+      return "/trainer/barriers";
     default:
       return "/cabinet";
   }
@@ -106,6 +111,21 @@ function buildTrainerSubtitle(t: TrainerResult): string {
   if (t.trainer_type === "emotion_chain" && rd.problem_text) {
     const text = String(rd.problem_text);
     return text.length > 60 ? text.slice(0, 60) + "..." : text;
+  }
+  if (t.trainer_type === "barriers_anxiety") {
+    const parts: string[] = [];
+    if (rd.context) parts.push(String(rd.context));
+    if (rd.profile) {
+      const profiles: Record<string, string> = {
+        chronic_anxiety: "Хроническая тревожность",
+        fear_of_judgement: "Страх оценки",
+        low_belief: "Низкая вера в успех",
+        ambitious_anxious: "Амбициозный, но тревожный",
+        balanced: "Сбалансированный тип",
+      };
+      parts.push(profiles[String(rd.profile)] || String(rd.profile));
+    }
+    return parts.join(" · ");
   }
   return "";
 }
