@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getToken } from "@/lib/auth";
 import Icon from "@/components/ui/icon";
 import func2url from "../../backend/func2url.json";
+import { checkPurchase, getBalance, spend } from "@/lib/payments";
 import type { BarriersStep, StepEntry, BarriersProfile } from "@/components/barriers/barriersTypes";
 import { detectBreakStep, detectProfile } from "@/components/barriers/barriersTypes";
 import BarriersInputSteps from "@/components/barriers/BarriersInputSteps";
 import BarriersAnalysisSteps from "@/components/barriers/BarriersAnalysisSteps";
+import BarriersPaywall from "@/components/barriers/BarriersPaywall";
 
 const STEP_ORDER: BarriersStep[] = [
   "context", "strength", "weakness", "steps_intro",
@@ -21,6 +23,37 @@ function calcProgress(step: BarriersStep): number {
 
 export default function Barriers() {
   const navigate = useNavigate();
+
+  // paywall
+  const [purchased, setPurchased] = useState(false);
+  const [balance, setBalance] = useState(0);
+  const [spending, setSpending] = useState(false);
+  const [paywallLoading, setPaywallLoading] = useState(true);
+  const isAuth = !!getToken();
+
+  useEffect(() => {
+    if (!isAuth) { setPaywallLoading(false); return; }
+    Promise.all([
+      checkPurchase("barriers_anxiety"),
+      getBalance(),
+    ]).then(([purchaseRes, balanceRes]) => {
+      if (purchaseRes.status === 200 && purchaseRes.data?.purchased) setPurchased(true);
+      if (balanceRes.status === 200 && balanceRes.data?.balance !== undefined)
+        setBalance(balanceRes.data.balance as number);
+    }).finally(() => setPaywallLoading(false));
+  }, []);
+
+  const handleBuy = async () => {
+    if (!isAuth) { navigate("/auth"); return; }
+    setSpending(true);
+    const res = await spend("barriers_anxiety");
+    if (res.status === 200) {
+      setPurchased(true);
+    } else if (res.status === 402) {
+      navigate("/balance");
+    }
+    setSpending(false);
+  };
 
   // context
   const [context, setContext] = useState("");
@@ -126,66 +159,83 @@ export default function Barriers() {
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto w-full px-4 pt-6">
-        <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-[#E06B2E] to-[#F08C56] rounded-full transition-all duration-500"
-            style={{ width: `${calcProgress(appStep)}%` }}
-          />
+      {purchased && (
+        <div className="max-w-2xl mx-auto w-full px-4 pt-6">
+          <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-[#E06B2E] to-[#F08C56] rounded-full transition-all duration-500"
+              style={{ width: `${calcProgress(appStep)}%` }}
+            />
+          </div>
+          <div className="mt-3 mb-1">
+            <h1 className="font-golos font-semibold text-gray-800 text-base">Барьеры, тревоги и стресс</h1>
+          </div>
         </div>
-        <div className="mt-3 mb-1">
-          <h1 className="font-golos font-semibold text-gray-800 text-base">Барьеры, тревоги и стресс</h1>
-        </div>
-      </div>
+      )}
 
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
-        <BarriersInputSteps
-          step={appStep}
-          context={context}
-          setContext={setContext}
-          contextCustom={contextCustom}
-          setContextCustom={setContextCustom}
-          strengths={strengths}
-          setStrengths={setStrengths}
-          strengthCustom={strengthCustom}
-          setStrengthCustom={setStrengthCustom}
-          weakness={weakness}
-          setWeakness={setWeakness}
-          weaknessCustom={weaknessCustom}
-          setWeaknessCustom={setWeaknessCustom}
-          steps={steps}
-          setSteps={setSteps}
-          currentStepNum={currentStepNum}
-          setCurrentStepNum={setCurrentStepNum}
-          draftText={draftText}
-          setDraftText={setDraftText}
-          draftX={draftX}
-          setDraftX={setDraftX}
-          draftY={draftY}
-          setDraftY={setDraftY}
-          setStep={setStep}
-        />
-        <BarriersAnalysisSteps
-          step={appStep}
-          steps={steps}
-          breakIdx={breakIdx}
-          setBreakIdx={setBreakIdx}
-          breakManual={breakManual}
-          setBreakManual={setBreakManual}
-          weakness={weakness}
-          weaknessCustom={weaknessCustom}
-          strengths={strengths}
-          strengthCustom={strengthCustom}
-          extraStrengths={extraStrengths}
-          setExtraStrengths={setExtraStrengths}
-          extraStrengthCustom={extraStrengthCustom}
-          setExtraStrengthCustom={setExtraStrengthCustom}
-          profile={profile}
-          saving={saving}
-          setStep={setStep}
-          onNavigateCabinet={() => navigate("/cabinet")}
-          onReset={handleReset}
-        />
+        {paywallLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-8 h-8 border-2 border-[#E06B2E] border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : !purchased ? (
+          <BarriersPaywall
+            balance={balance}
+            spending={spending}
+            isAuth={isAuth}
+            onBuy={handleBuy}
+          />
+        ) : (
+          <>
+            <BarriersInputSteps
+              step={appStep}
+              context={context}
+              setContext={setContext}
+              contextCustom={contextCustom}
+              setContextCustom={setContextCustom}
+              strengths={strengths}
+              setStrengths={setStrengths}
+              strengthCustom={strengthCustom}
+              setStrengthCustom={setStrengthCustom}
+              weakness={weakness}
+              setWeakness={setWeakness}
+              weaknessCustom={weaknessCustom}
+              setWeaknessCustom={setWeaknessCustom}
+              steps={steps}
+              setSteps={setSteps}
+              currentStepNum={currentStepNum}
+              setCurrentStepNum={setCurrentStepNum}
+              draftText={draftText}
+              setDraftText={setDraftText}
+              draftX={draftX}
+              setDraftX={setDraftX}
+              draftY={draftY}
+              setDraftY={setDraftY}
+              setStep={setStep}
+            />
+            <BarriersAnalysisSteps
+              step={appStep}
+              steps={steps}
+              breakIdx={breakIdx}
+              setBreakIdx={setBreakIdx}
+              breakManual={breakManual}
+              setBreakManual={setBreakManual}
+              weakness={weakness}
+              weaknessCustom={weaknessCustom}
+              strengths={strengths}
+              strengthCustom={strengthCustom}
+              extraStrengths={extraStrengths}
+              setExtraStrengths={setExtraStrengths}
+              extraStrengthCustom={extraStrengthCustom}
+              setExtraStrengthCustom={setExtraStrengthCustom}
+              profile={profile}
+              saving={saving}
+              setStep={setStep}
+              onNavigateCabinet={() => navigate("/cabinet")}
+              onReset={handleReset}
+            />
+          </>
+        )}
       </main>
     </div>
   );

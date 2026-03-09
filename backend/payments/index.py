@@ -22,6 +22,7 @@ PRICES = {
     "child_analysis": 990,
     "destiny_map": 1490,
     "family_matrix": 1990,
+    "barriers_anxiety": 290,
 }
 
 PRODUCT_NAMES = {
@@ -30,6 +31,7 @@ PRODUCT_NAMES = {
     "child_analysis": "Анализ ребёнка",
     "destiny_map": "Полная карта судьбы",
     "family_matrix": "Матрица судьбы семьи",
+    "barriers_anxiety": "Барьеры, тревоги и стресс",
 }
 
 
