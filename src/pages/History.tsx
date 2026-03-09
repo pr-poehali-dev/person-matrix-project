@@ -50,6 +50,7 @@ const PRODUCT_COLORS: Record<string, { color: string; bg: string }> = {
 const TRAINER_META: Record<string, { title: string; icon: string; color: string; bg: string }> = {
   emotion_chain: { title: "Цепочка чувств", icon: "Link", color: "text-violet-600", bg: "bg-violet-50" },
   barriers_anxiety: { title: "Барьеры, тревоги и стресс", icon: "BarChart2", color: "text-[#E06B2E]", bg: "bg-[#FFF3EC]" },
+  lang_relations: { title: "Язык отношений", icon: "HeartHandshake", color: "text-rose-500", bg: "bg-rose-50" },
 };
 
 function buildResultLink(p: Purchase): string {
@@ -126,6 +127,13 @@ function buildTrainerSubtitle(t: TrainerResult): string {
       parts.push(profiles[String(rd.profile)] || String(rd.profile));
     }
     return parts.join(" · ");
+  }
+  if (t.trainer_type === "lang_relations") {
+    const entries = rd.entries as Array<Record<string, unknown>> | undefined;
+    if (entries && entries.length > 0) {
+      return `${entries.length} ситуаций записано`;
+    }
+    return "Анализ отношений";
   }
   return "";
 }
@@ -249,10 +257,16 @@ export default function History() {
                 const meta = TRAINER_META[t.trainer_type] || { title: t.trainer_type, icon: "Dumbbell", color: "text-violet-600", bg: "bg-violet-50" };
                 const subtitle = buildTrainerSubtitle(t);
 
+                const trainerLink = t.trainer_type === "lang_relations"
+                  ? "/trainer/lang-relations"
+                  : t.trainer_type === "barriers_anxiety"
+                  ? "/trainer/barriers"
+                  : `/trainer/emotion-chain/result?id=${t.id}`;
+
                 return (
                   <Link
                     key={`t-${t.id}`}
-                    to={`/trainer/emotion-chain/result?id=${t.id}`}
+                    to={trainerLink}
                     className="bg-white rounded-2xl soft-shadow p-5 flex items-center gap-4 hover:soft-shadow-hover transition-all duration-200 hover:-translate-y-0.5 group block"
                   >
                     <div className={`w-12 h-12 rounded-xl ${meta.bg} flex items-center justify-center flex-shrink-0`}>
