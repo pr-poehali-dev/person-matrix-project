@@ -50,6 +50,7 @@ export default function LangRelations() {
     const res = await spend("lang_relations");
     if (res.status === 200) {
       setPurchased(true);
+      setStep("rel_type");
     } else if (res.status === 402) {
       navigate("/balance");
     }
